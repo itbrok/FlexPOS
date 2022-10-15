@@ -1,0 +1,160 @@
+<div class="h-screen flex-grow-1">
+    <!-- Header -->
+    <header class="bg-surface-primary border-bottom pt-6">
+        <div class="container-fluid">
+            <div class="mb-npx">
+                <div class="row align-items-center">
+                    <div class="col-sm-6 col-12 mb-4 mb-sm-0">
+                        <!-- Title -->
+                        <h1 class="h2 mb-6 ls-tight">الاحصائيات</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Main -->
+    <main class="py-6 bg-surface-secondary">
+        <div class="container-fluid">
+            <!-- Card stats -->
+            <div class="row g-6 mb-6">
+                <div class="col-xl-3 col-sm-6 col-12" onclick="window.location='?p=clients_panel'" style="cursor: pointer;">
+                    <div class="card shadow border-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <span class="h6 font-semibold text-muted text-sm d-block mb-2">العملاء</span>
+                                    <span id="ClientsCount" class="h3 font-bold mb-0">0</span>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-tertiary text-white text-lg rounded-circle">
+                                        <i class="fa-solid fa-users"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-sm-6 col-12" onclick="window.location='?p=products_panel'" style="cursor: pointer;">
+                    <div class="card shadow border-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <span class="h6 font-semibold text-muted text-sm d-block mb-2">المنتجات</span>
+                                    <span id="ProductsCount" class="h3 font-bold mb-0"></span>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-primary text-white text-lg rounded-circle">
+                                        <i class="fa-solid fa-boxes-stacked"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-sm-6 col-12" onclick="window.location='?p=salse_panel&do=showOrders'" style="cursor: pointer;">
+                    <div class="card shadow border-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <span class="h6 font-semibold text-muted text-sm d-block mb-2">الفواتير</span>
+                                    <span id="ReceiptsCount" class="h3 font-bold mb-0">0</span>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-info text-white text-lg rounded-circle">
+                                        <i class="fa-solid fa-receipt"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-sm-6 col-12" onclick="window.location='?p=users_panel'" style="cursor: pointer;">
+                    <div class="card shadow border-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <span class="h6 font-semibold text-muted text-sm d-block mb-2">الموظفين</span>
+                                    <span id="UsersCount" class="h3 font-bold mb-0">0</span>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-warning text-white text-lg rounded-circle">
+                                        <i class="fa-solid fa-user-tie"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow border-0 mb-7">
+                <div class="card-header">
+                    <h5 class="mb-0">العملاء</h5>
+                    <span class="text-sm text-muted fw-light">الذين تم اضافتهم اخر اسبوع</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-nowrap">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">الاسم</th>
+                                <th scope="col">العنوان</th>
+                                <th scope="col">اضيف بواسطة</th>
+                                <th scope="col">التاريخ</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="lastclients">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        countsToShow = ["ClientsCount", "ProductsCount", "ReceiptsCount", "UsersCount"];
+        countsToShow.forEach(element => {
+            $.post("", `get${element}=1`,
+                function (data, textStatus, jqXHR) {
+                    resp = JSON.parse(data);
+                    if (resp.ok != true) {
+                        alertify.error(resp.msg);
+                    } else {
+                        $(`#${element}`).html(resp[0]);
+                    }
+                }
+            );
+        });
+        
+
+        // Get Last Inserted Clients Within A Week
+        $.post("", { "getLastAddedClients": 1 }, function (html) {
+            try {
+    resp = JSON.parse(html);
+} catch (error) {
+    alertify.error('حدث خطا من السيرفر');
+    return;
+}
+            if (resp.ok != true) {
+            } else {
+                var itemData = resp[0];
+                $("#lastclients").html('');
+                try {
+                    itemData.forEach(function (item) {
+                        $("#lastclients").append(`<tr id="client${item.id}">`);
+                        $("#client" + item.id).append(`<td><a class="text-heading font-semibold" href="?p=client&do=view&id=${item.id}">${item.name}</a></td>`);
+                        $("#client" + item.id).append(`<td>${item.address}</td>`);
+                        $("#client" + item.id).append(`<td><a class="text-heading font-semibold" href="?p=user&do=view&id=${item.addbyid}">${item.addby}</a></td>`);
+                        $("#client" + item.id).append(`<td>${item.date}</td>`);
+                        $("#client" + item.id).append(`<td class="text-end"><a href="?p=client&do=view&id=${item.id}" class="btn btn-sm btn-neutral"><i class="fa fa-pen"></i></a></td>`);
+                        $("#lastclients").append('</tr>');
+                    });
+                } catch (error) {
+                    $("#lastclients").html('لايوجد');
+                }
+            }
+        });
+    });
+</script>

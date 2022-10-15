@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html dir="rtl" itemscope="" itemtype="http://schema.org/WebPage" lang="ar-IQ">
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            #invoice-POS{
+                /* padding:2mm; */
+                margin: 0 auto;
+                width: 72mm; 
+                background: #FFF;
+            }
+            h2{
+                font-size: 1em;
+                margin: 0mm;
+            }
+
+            p{
+                font-size: .9em;
+                color: rgb(0, 0, 0);
+                line-height: 5mm;
+                margin: 0.5mm;
+            }
+            
+            #top, #mid,#bot{ /* Targets all id with 'col-' */
+                border-bottom: 1px solid #EEE;
+            }
+
+            #top{min-height: 90px;}
+            #mid{min-height: 80px;} 
+            #bot{ min-height: 50px;}
+
+            #top .logo{
+                height: 50px;
+                width: 50px;
+                background: url(http://michaeltruong.ca/images/logo1.png) no-repeat;
+                background-size: 50px 50px;
+            }
+            .info{
+                display: block;
+                margin-left: 0;
+            }
+
+            table{
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .tabletitle{
+                font-size: 4mm;
+                background: #EEE;
+            }
+            .service{border-bottom: .05mm solid #000000;}
+            /* .item{width: 24mm;} */
+            .itemtext{font-size: 5mm;}
+
+            #legalcopy{
+                margin-top: 2mm;
+            }
+
+        </style>
+    </head>
+    <body>
+    <div id="invoice-POS">
+    
+    <center id="top">
+      <div class="logo"></div>
+      <div class="info"> 
+        <h2>@company_name</h2>
+      </div><!--End Info-->
+    </center><!--End InvoiceTop-->
+    
+    <div id="mid">
+      <div class="info">
+        <h2>معلومات التواصل</h2>
+        <p> 
+            العنوان : @address</br>
+            ايميل : @email</br>
+            موبايل : @phone</br>
+        </p>
+      </div>
+    </div><!--End Invoice Mid-->
+    
+    <div id="bot">
+
+					<div id="table">
+						<table>
+							<tr class="tabletitle">
+								<td class="item"><h2>المادة</h2></td>
+								<td class="Hours"><h2>عدد</h2></td>
+								<td class="Rate"><h2>السعر</h2></td>
+							</tr>
+                            @foreach start
+							<tr class="service">
+								<td class="tableitem"><p class="itemtext">@item_name</p></td>
+								<td class="tableitem"><p class="itemtext">@item_qty</p></td>
+								<td class="tableitem"><p class="itemtext">@item_price</p></td>
+							</tr>
+                            @foreach end
+
+							<tr class="tabletitle">
+								<td></td>
+								<td class="Rate"><h2>الخصم</h2></td>
+								<td class="payment"><h2>@discount</h2></td>
+							</tr>
+
+							<tr class="tabletitle">
+								<td></td>
+								<td class="Rate"><h2>المجموع</h2></td>
+								<td class="payment"><h2>@total_price</h2></td>
+							</tr>
+
+						</table>
+					</div><!--End Table-->
+
+					<div id="legalcopy">
+						<p class="legal">
+                            <strong>
+                                شكرا لتسوقكم منا
+                            </strong>
+                            <br>
+                            نشوفكم بعدين
+						</p>
+                        <svg class="barcode"
+                            jsbarcode-format="upc"
+                            jsbarcode-value="123456789012"
+                            jsbarcode-textmargin="0"
+                            jsbarcode-fontoptions="bold">
+                        </svg>
+					</div>
+
+				</div><!--End InvoiceBot-->
+            </div><!--End Invoice-->
+    </body>
+</html>

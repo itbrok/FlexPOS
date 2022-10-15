@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ar-IQ">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--                               Font Awesome                               -->
+    <link rel="stylesheet" href="assets/fontawesome-free-6.2.0-web/css/all.min.css">
+    <link rel="stylesheet" href="assets/bootstrap-5.2.1-dist/css/bootstrap.rtl.css">
+    <!--                    jquery                    -->
+    <script src="assets/js/jquery-3.4.1.min.js"></script>
+    <!--                    alertify                    -->
+    <script src="assets/alertify/alertify.js"></script>
+    <link rel="stylesheet" href="assets\alertify\css\alertify.min.css" />
+    <link rel="stylesheet" href="assets\alertify\css\themes\default.min.css" />
+    <title>Flex - installation</title>
+
+    <link rel="stylesheet" href="install/style.css">
+</head>
+
+<body>
+    <!-- partial:index.partial.html -->
+    <!-- Multi step form -->
+    <section class="multi_step_form">
+        <div id="msform">
+            <!-- Tittle -->
+            <div class="tittle">
+                <h2>Flex تثبيت تطبيق</h2>
+                <p>يجب ادخال المعلومات المطلوبة للمتابعة باستخدام التطبيق</p>
+            </div>
+            <!-- progressbar -->
+            <ul id="progressbar">
+                <li class="active">معلومات السيرفر</li>
+                <li>اكمال التثبيت</li>
+            </ul>
+            <!-- fieldsets -->
+            <fieldset dir="rtl" class="mb-3">
+                <h3>ادخل المعلومات التاليه للمتابعه</h3>
+                <div class="form-group">
+                    <label class="form-label" for="host">الهوست</label>
+                    <input type="text" class="form-control form-control-sm" id="host" placeholder="localhost" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="username">اسم المستخدم</label>
+                    <input type="text" class="form-control form-control-sm" id="username" placeholder="root" autocomplete="off">
+                </div>
+                <div class="form-group mb-3">
+                    <label class="form-label" for="password">الباسورد</label>
+                    <input type="text" class="form-control form-control-sm" id="password" placeholder="12345678" autocomplete="off">
+                </div>
+                <button type="button" class="next action-button">التالي</button>
+            </fieldset>
+            <fieldset class="mb-3">
+                <h3>سيبدا التثبيت عند النقر على <b>انهاء</b></h3>
+                <h6>يرجى التاكد من ادخال المعلومات الصحيحه قبل المتابعه</h6>
+                <button type="button" class="action-button previous previous_button">رجوع</button>
+                <button id="send" class="action-button">انهاء</button>
+            </fieldset>
+        </div>
+    </section>
+    <!-- End Multi step form -->
+    <!-- partial -->
+    <script src="assets/popperjs/popper.min.js"></script>
+    <script src="assets/bootstrap-5.2.1-dist/js/bootstrap.min.js"></script>
+    <script src='install/jquery.easing.min.js'></script>
+    <script src="install/script.js"></script>
+</body>
+
+</html>

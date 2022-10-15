@@ -1,0 +1,267 @@
+<div class="h-screen flex-grow-1">
+    <!-- Header -->
+    <header class="bg-surface-primary border-bottom pt-6">
+        <div class="container-fluid">
+            <div class="mb-npx">
+                <div class="row align-items-center">
+                    <div class="col-sm-6 col-12 mb-4 mb-sm-0">
+                        <!-- Title -->
+                        <h1 class="h2 mb-6 ls-tight">المنتجات</h1>
+                    </div>
+                    <!-- Actions -->
+                    <div class="col-sm-6 col-12 text-sm-end">
+                        <div class="mx-n1">
+                            <a href="?p=product&do=add" class="btn d-inline-flex btn-sm btn-primary mx-1">
+                                <span class=" pe-2">
+                                    <i class="bi bi-plus"></i>
+                                </span>
+                                <span>اضافة</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Main -->
+    <main class="py-6 bg-surface-secondary">
+        <div class="container-fluid">
+            <div class="card shadow border-0 mb-7">
+                <div class="card-header">
+                    <input style="padding-right: 2.25rem !important;"
+                        class="form-control mt-1 p-2 text-sm font-semibold shadow-none rounded-pill" id="quick_search"
+                        type="search" placeholder="بحث" autocomplete="off">
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-nowrap">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">المادة</th>
+                                <th scope="col">الرقم</th>
+                                <th scope="col">الكمية</th>
+                                <th scope="col">سعر البيع</th>
+                                <th scope="col">سعر الشراء</th>
+                                <th scope="col">المخزن</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="productslist">
+                        </tbody>
+                    </table>
+                    <div class="text-center mb-5 pb-5 pt-5 mt-5 text-secondary">
+                        <span id="errorAlertText" class="h4"></span>
+                    </div>
+                </div>
+                <div class="card-footer border-0 py-5">
+                    <a class="btn-sm btn-dark border-0 shadow-none gradient-bottom-right start-teal-500 end-blue-500 start-pink-500-hover end-cyan-500-hover"
+                        id="back"><i class='col fa fa-angle-right'></i></a>
+                    <a class="btn-sm btn-dark border-0 shadow-none gradient-bottom-right start-teal-500 end-blue-500 start-pink-500-hover end-cyan-500-hover"
+                        id="next"><i class='col fa fa-angle-left'></i></a>
+                    <span id="resCount" class="text-muted text-sm"></span>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+
+<script>
+
+    function addDataToTable(data) {
+        $("#productslist").html('');
+        try {
+            data.forEach(function (item) {
+                $("#productslist").append(`<tr id="product${item.id}">`);
+                $("#product" + item.id).append(`<td><a class="text-heading font-semibold" onClick="viewProdectDetails(${item.id})">${item.name}</a></td>`);
+                $("#product" + item.id).append(`<td>${item.number}</td>`);
+                $("#product" + item.id).append(`<td>${item.quantity}</td>`);
+                $("#product" + item.id).append(`<td>${item.sell_price}</td>`);
+                $("#product" + item.id).append(`<td>${item.buy_price}</td>`);
+                $("#product" + item.id).append(`<td>${item.warehouse_name + "-" + item.corridor + "-" + item.shelf + "-" + item.box}</td>`);
+                $("#product" + item.id).append(`<td class="text-end"><button class="btn btn-sm btn-square btn-neutral ms-1 text-danger" onclick="deleteit('product',${item.id},'#product${item.id}')"> <i class="fa fa-trash"></i></button><a href="?p=product&do=view&id=${item.id}" class="btn btn-sm btn-square btn-neutral text-danger-hover"><i class="fa fa-pen"></i></a></td>`);
+                $("#productslist").append('</tr>');
+            });
+        } catch (error) {
+            alertify.error(error);
+        }
+    }
+
+    var lastStoredData = null;
+
+    limit = 1;
+    max = 0;
+    page = 1;
+    // Get List of products
+    function getproducts() {
+        $.post("", { getproductsList: limit }, function (html) {
+            try {
+                resp = JSON.parse(html);
+            } catch (error) {
+                return;
+            }
+            if (resp.ok != true) {
+                alertify.error(resp.msg);
+            } else {
+                lastStoredData = resp[0];
+                addDataToTable(resp[0]);
+                $("#resCount").html(`${page} : عرض ${lastStoredData.length} من ${lastStoredData[0].resCount} نتيجة`);
+                max = lastStoredData[0].resCount;
+                $("#resCount").show();
+            }
+        });
+    }
+    $(document).ready(function () {
+        getproducts();
+        $("#back").click(function () {
+            if (limit > 41) {
+                limit -= 41;
+                getproducts();
+                page--;
+            }
+        });
+        $("#next").click(function () {
+            if ((limit + 41) <= max) {
+                limit += 41;
+                getproducts();
+                page++;
+            }
+        });
+
+
+
+        $("#quick_search").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            if (value.length > 3) {
+                $.post("", { search : value }, function (html) {
+                    try {
+                        resp = JSON.parse(html);
+                    } catch (error) {
+                        alertify.error(error);
+                    }
+
+                    if (resp.ok != true) {
+                        alertify.error(resp.msg); // Print Error MSG
+                    } else {
+                        addDataToTable(resp[0]);
+                        $("#resCount").hide();
+                    }
+                });
+            } else {
+                addDataToTable(lastStoredData);
+                $("#resCount").html(`عرض ${lastStoredData.length} من ${lastStoredData[0].resCount} نتيجة`);
+                max = lastStoredData[0].resCount;
+                $("#resCount").show();
+            }
+        });
+    });
+</script>
+
+
+<!-- Product Details -->
+<div class="modal fade" id="productDetails" dir="ltr" tabindex="-1" aria-labelledby="productDetailsLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="background-color: #ededed;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productDetailsLabel">تفاصيل المنتج</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body col" dir="rtl">
+                <div class="row">
+                    <div class="col">
+                        <img id="product_img" src="" class="rounded mx-auto mb-3 d-block" alt="">
+                    </div>
+                    <div class="col prodect-details">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<script>
+
+
+    function viewProdectDetails(id) {
+        var formData = { getProductByID: id };
+        $.post("", formData, function (html) {
+            if (html != false) {
+                try {
+                    resp = JSON.parse(html);
+                } catch (error) {
+                    alertify.error('حدث خطا من السيرفر');
+                    return;
+                }
+                if (resp.ok != true) {
+                    alertify.error(resp.msg); // Print Error MSG
+                } else {
+                    var itemData = resp[0];
+                    $(".prodect-details").html("");
+                    $(".prodect-details").append(`<div class="row">اسم المنتج : ${itemData.name}</div>`);
+                    $(".prodect-details").append(`<div class="row">الرقم : ${itemData.number}</div>`);
+                    $(".prodect-details").append(`<div class="row">العدد بالمخزن : ${itemData.quantity}</div>`);
+                    $(".prodect-details").append(`<div class="row">سعر الشراء : ${itemData.buy_price}</div>`);
+                    $(".prodect-details").append(`<div class="row">سعر البيع : ${itemData.sell_price}</div>`);
+                    $(".prodect-details").append(`<div class="row">سعر الجملة : ${itemData.wholesale_price}</div>`);
+                    if (itemData.img.length > 12) {
+                        $("#product_img").attr("src", itemData.img);
+                    } else {
+                        $.post("", { "defult_product_img": 1 }, function (d) {
+                            if (html != false) {
+                                img = JSON.parse(d);
+                                if (img.ok != true) {
+                                    alertify.error(img.msg); // Print Error MSG
+                                } else {
+                                    $("#product_img").attr("src", img[0]);
+                                }
+                            }
+                        });
+                    }
+
+                    //class
+                    $.post("", { "getclass": itemData.class_id }, function (html) {
+                        if (html != false) {
+                            try {
+                                resp = JSON.parse(html);
+                            } catch (error) {
+                                alertify.error('حدث خطا من السيرفر');
+                                return;
+                            }
+                            if (resp.ok) {
+                                $(".prodect-details").append(`<div class="row">النوع : ${resp[0]}</div>`);
+                            } else {
+                                $(".prodect-details").append(`<div class="row">النوع : غير معروف</div>`);
+                            }
+                        }
+                        //unit
+                        $.post("", { "unit": itemData.unit_id }, function (html) {
+                            if (html != false) {
+                                try {
+                                    resp = JSON.parse(html);
+                                } catch (error) {
+                                    alertify.error('حدث خطا من السيرفر');
+                                    return;
+                                }
+                                if (resp.ok) {
+                                    $(".prodect-details").append(`<div class="row">الوحدة : ${resp[0]}</div>`);
+                                } else {
+                                    $(".prodect-details").append(`<div class="row">الوحدة : غير معروف</div>`);
+                                }
+                            }
+                            $(".prodect-details").append(`<div class="row">الخزن : ${itemData.warehouse_name} - ${itemData.corridor} - ${itemData.shelf} - ${itemData.box}</div>`);
+                            $(".prodect-details").append(`<div class="row">ملاحظات : ${itemData.note}</div>`);
+                        });
+                    });
+                    $('#productDetails').modal('toggle');
+                }
+            }
+        });
+
+    }
+</script>

@@ -1,0 +1,369 @@
+<link rel="stylesheet" href="assets/bootstrap-5.2.1-dist/css/bootstrap.rtl.css">
+<div class="h-screen flex-grow-1">
+    <!-- Header -->
+    <header class="bg-surface-primary border-bottom pt-6">
+        <div class="container-fluid">
+            <div class="mb-npx">
+                <div class="row align-items-center">
+                    <div class="col-sm-6 col-12 mb-4 mb-sm-0">
+                        <!-- Title -->
+                        <h1 class="h2 mb-6 ls-tight">تعديل معلومات منتج</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Main -->
+    <main class="py-6 bg-surface-secondary">
+        <div class="container-fluid">
+            <div class="card shadow border-0 mb-7">
+                <div class="card-header">
+                    #
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-6 col-sm-6 m-3">
+                        <form id="product">
+                            <div class="row">
+                                <label class="form-label" for="barcodes">باركود</label>
+                            </div>
+                            <div class="col">
+                                <div class="input-group">
+                                    <span
+                                        class="btn btn-natuaral input-group-text d-flex align-items-center gradient-top-left start-teal-500 end-blue-500 border-0 text-white"
+                                        id="randomBarcode"><i class="fa-solid fa-barcode"></i></span>
+                                    <textarea class="form-control" name="barcodes" id="barcodes"></textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <label class="form-label" for="name">الاسم</label>
+                                    <input type="hidden" name="id" id="id">
+                                    <input type="hidden" name="img" id="img">
+                                    <input type="text" class="form-control form-control-sm" name="name" id="name">
+                                </div>
+                                <div class="col">
+                                    <label class="form-label" for="number">الرقم</label>
+                                    <input type="text" class="form-control form-control-sm" name="number" id="number">
+                                </div>
+                                <div class="col">
+                                    <label class="form-label" for="quantity">الكمية</label>
+                                    <input type="number" class="form-control form-control-sm" name="quantity"
+                                        id="quantity">
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col">
+                                    <label class="form-label" for="buy_price">سعر الشراء</label>
+                                    <input type="number" class="form-control form-control-sm" name="buy_price"
+                                        id="buy_price">
+                                </div>
+                                <div class="col">
+                                    <label class="form-label" for="sell_price">سعر البيع</label>
+                                    <input type="number" class="form-control form-control-sm" name="sell_price"
+                                        id="sell_price">
+                                </div>
+                                <div class="col">
+                                    <label class="form-label" for="wholesale_price">سعر الجملة</label>
+                                    <input type="number" class="form-control form-control-sm" name="wholesale_price"
+                                        id="wholesale_price">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <label class="form-label" for="class_id">النوع</label>
+                                    <div class="input-group mb-3">
+                                        <span
+                                            class="btn btn-natuaral input-group-btn d-flex align-items-center gradient-bottom-right start-teal-500 end-blue-500 border-0 text-white"
+                                            id="addNewClass"><i class="fa-solid fa-plus"></i></span>
+                                        <select class="form-control form-select-sm" name="class_id"
+                                            id="class_id"></select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label" for="unit_id">الوحدة</label>
+                                    <div class="input-group mb-3">
+                                        <span
+                                            class="btn btn-natuaral input-group-btn d-flex align-items-center gradient-bottom-right start-teal-500 end-blue-500 border-0 text-white"
+                                            id="addNewUnit"><i class="fa-solid fa-plus"></i></span>
+                                        <select class="form-control form-select-sm" name="unit_id"
+                                            id="unit_id"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="form-label" for="warehouse_name">الخزن</label>
+                            </div>
+                            <div class="row">
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control form-control-sm" name="warehouse_name"
+                                        placeholder="اسم المخزن" id="warehouse_name">
+                                    <input type="text" class="form-control form-control-sm" name="corridor"
+                                        placeholder="الممر" id="corridor">
+                                    <input type="text" class="form-control form-control-sm" name="shelf"
+                                        placeholder="الرف" id="shelf">
+                                    <input type="text" class="form-control form-control-sm" name="box"
+                                        placeholder="الخانة" id="box">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="note">ملاحظات</label>
+                                <textarea class="form-control form-control-sm" name="note" id="note"></textarea>
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="note">صورة</label>
+                                <input class="form-control form-control-sm" type="file" id="imgInput" accept="image/*">
+                                <img class="img-fluid rounded d-block" id="product_img">
+                                <canvas height="300" width="400" style="display: none;" id="product_canvas">
+                            </div>
+                        </form>
+                        <div class="mt-2">
+                            <button id="ok" class="btn btn-primary w-full">موافق</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+
+<script>
+    canAddNew = -1; // ==== 1 Mean new product +.....+ ==== 0 Update product's data
+
+    function getQueryParams(qs) {
+        qs = qs.split('+').join(' ');
+
+        var params = {},
+            tokens,
+            re = /[?&]?([^=]+)=([^&]*)/g;
+
+        while (tokens = re.exec(qs)) {
+            params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+        }
+
+        return params;
+    }
+
+    function isArray(obj) { // for `product.barcodes`
+        return Object.prototype.toString.call(obj) === '[object Array]';
+    }
+
+    function generateRandomBarcode() {
+        possible = '1234567890';
+        var text = '';
+        for (var i = 0; i < 15; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text + "\n";
+    }
+
+    function getClassAndUnit(selectLastId = false) {
+        // Add classes and unites
+        $.post("", { getUnitesAndClass: 1 }, function (html) {
+            try {
+                resp = JSON.parse(html);
+            } catch (error) {
+                alertify.error('حدث خطا من السيرفر');
+                return;
+            }
+            if (resp.ok != true) {
+                alertify.error(resp.msg);
+            } else {
+                $("#unit_id").html('');
+                $("#class_id").html('');
+                resp[0].unit.forEach((el) => {
+                    $("#unit_id").prepend(`<option id="unit${el.unitID}" value="${el.unitID}">${el.unitType}</option>`);
+                    ulastId = el.unitID;
+                });
+                resp[0].class.forEach((el) => {
+                    $("#class_id").prepend(`<option id="class${el.classID}" value="${el.classID}">${el.classType}</option>`);
+                    clastId = el.classID;
+                });
+                if (selectLastId) {
+                    $(`#class${clastId}`).attr("selected", true);
+                    $(`#unit${ulastId}`).attr("selected", true);
+                }
+            }
+        });
+    }
+
+    function drawImageScaled(img, ctx) {
+        var canvas = ctx.canvas;
+        var hRatio = canvas.width / img.width;
+        var vRatio = canvas.height / img.height;
+        var ratio = Math.min(hRatio, vRatio);
+        var centerShift_x = (canvas.width - img.width * ratio) / 2;
+        var centerShift_y = (canvas.height - img.height * ratio) / 2;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, img.width, img.height, centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
+        return canvas.toDataURL();
+    }
+
+
+    function updateProductImg(url) {
+        canvas = $('#product_canvas');
+        ctx = canvas[0].getContext('2d');
+        img = new Image;
+        img.onload = function() {
+            data = drawImageScaled(img, ctx);
+            $("#img").val(data);
+            $('#product_img')[0].src = data;
+        }
+        img.src = url;
+    }
+
+    // To directly add a new unit and class 
+    function addNew(what, value) {
+        if (value.length > 1) {
+            $.post("", `addNew${what}=1&type=${value}`, function (html) {
+                try {
+                    resp = JSON.parse(html);
+                } catch (error) {
+                    alertify.error('حدث خطا من السيرفر');
+                    return;
+                }
+                if (resp.ok == false) {
+                    alertify.error(resp.msg);
+                } else {
+                    getClassAndUnit(true);
+                    alertify.success(`تم اضافة ${value} بنجاح`);
+                }
+            });
+        } else {
+            alertify.error("تم الالغاء");
+        }
+    }
+    $(document).ready(function () {
+        $("#randomBarcode").click(function (e) {
+            $("#barcodes").append(generateRandomBarcode());
+        });
+
+
+        getClassAndUnit();
+
+        var query = getQueryParams(document.location.search);
+
+        var DO = query.do;
+        if (DO == "view") {
+            $.post("", { getProductByID: query.id }, function (html) {
+                try {
+                    resp = JSON.parse(html);
+                } catch (error) {
+                    alertify.error('حدث خطا من السيرفر');
+                    return;
+                }
+                if (resp.ok != true) {
+                    alertify.error(resp.msg);
+                } else {
+                    var itemData = resp[0];
+                    barcodes = JSON.parse(itemData.barcode);
+                    if (isArray(barcodes)) {
+                        barcodesTextAreaValue = "";
+                        barcodes.forEach(element => {
+                            barcodesTextAreaValue += element + "\n";
+                        });
+                    } else {
+                        barcodesTextAreaValue = barcodes;
+                    }
+                    $("#barcodes").html(barcodesTextAreaValue);
+
+                    $("#number").val(itemData.number);
+                    $("#name").val(itemData.name);
+
+                    $(".card-header").html("#" + itemData.id);
+                    $("#id").val(itemData.id);
+
+                    $("#quantity").val(itemData.quantity);
+                    $("#buy_price").val(itemData.buy_price);
+                    $("#sell_price").val(itemData.sell_price);
+                    $("#wholesale_price").val(itemData.wholesale_price);
+
+                    $(`#class${itemData.class_id}`).attr("selected", true);
+                    $(`#unit${itemData.unit_id}`).attr("selected", true);
+
+                    $("#warehouse_name").val(itemData.warehouse_name);
+                    $("#corridor").val(itemData.corridor);
+                    $("#shelf").val(itemData.shelf);
+                    $("#box").val(itemData.box);
+                    $("#note").val(itemData.note);
+                    if (itemData.img.length > 12) {
+                        updateProductImg(itemData.img);
+                    } else {
+                        $.post("", { "defult_product_img": 1 }, function (d) {
+                            if (html != false) {
+                                img = JSON.parse(d);
+                                if (img.ok != true) {
+                                    alertify.error(img.msg); // Print Error MSG
+                                } else {
+                                    updateProductImg(img[0]);
+                                }
+                            }
+                        });
+                    }
+                    canAddNew = 0;
+                }
+            });
+
+        } else if (DO == "add") {
+            canAddNew = 1;
+            $("h1").html("اضافة منتج جديد");
+        }
+
+
+        $("#ok").click(function (e) {
+            e.preventDefault();
+            if (canAddNew == 1) {
+                $.post("", 'addNewProduct=1&' + $("#product").serialize(), function (html) {
+                    try {
+                        resp = JSON.parse(html);
+                    } catch (error) {
+                        alertify.error('حدث خطا من السيرفر');
+                        return;
+                    }
+                    if (resp.ok == false) {
+                        alertify.error(resp.msg);
+                    } else {
+                        alertify.success("تم اضافة المنتج");
+                        $("form").reset();
+                    }
+                });
+            } else if (canAddNew == 0) {
+                $.post("", 'updateproduct=1&' + $("#product").serialize(), function (html) {
+                    try {
+                        resp = JSON.parse(html);
+                    } catch (error) {
+                        alertify.error('حدث خطا من السيرفر');
+                        return;
+                    }
+                    if (resp.ok == false) {
+                        alertify.error(resp.msg);
+                    } else {
+                        window.location = '?p=products_panel';
+                    }
+                });
+            }
+        });
+
+        $("#addNewUnit").click(function (e) {
+            alertify.prompt('اضافة وحدة جديدة', '<div dir="rtl">اسم الوحدة</div>', ''
+                , function (evt, value) {
+                    addNew("Unit", value);
+                }
+                , function () { alertify.error('تم الالغاء') })
+        });
+        $("#addNewClass").click(function (e) {
+            alertify.prompt('اضافة نوع جديد', '<div dir="rtl">اسم النوع</div>', ''
+                , function (evt, value) {
+                    addNew("Class", value);
+                }
+                , function () { alertify.error('تم الالغاء') })
+        });
+
+
+        $('#imgInput').change(function () {
+            updateProductImg(URL.createObjectURL($(this)[0].files[0]));
+        });
+    });
+</script>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!--                   Webpixels CSS                -->
+    <link rel="stylesheet" href="assets/css/webpixels.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <title>Flex - تسجيل الدخول</title>
+    <script src="assets/js/jquery-3.4.1.min.js"></script>
+    <script src="assets/js/login.js"></script>
+    <!--                    alertify                    -->
+    <script src="assets/alertify/alertify.js"></script>
+    <link rel="stylesheet" href="assets\alertify\css\alertify.min.css" />
+    <link rel="stylesheet" href="assets\alertify\css\themes\default.min.css" />
+</head>
+
+<body dir="rtl">
+    <div>
+        <!-- Login Form -->
+        <div class="container">
+            <div class="row justify-content-center mt-5">
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                    <div class="card shadow">
+                        <div class="card-title text-center border-bottom">
+                            <h2 class="p-3">تسجيل الدخول</h2>
+                        </div>
+                        <div class="card-body">
+                            <div style="min-height: 20px;">
+                                <div id="errorAlert" class="alert alert-danger align-items-center" style="display:none;"
+                                    role="alert">
+                                    <i class="fas fa-exclamation-triangle p-1"></i>
+                                    <span id="errorAlertText"></span>
+                                </div>
+                            </div>
+                            <form>
+                                <div class="mb-4">
+                                    <label for="username" class="form-label">اسم المستخدم</label>
+                                    <input type="text" name="username" class="form-control" id="username" />
+                                </div>
+                                <div class="mb-4">
+                                    <label for="password" class="form-label">كلمة المرور</label>
+                                    <input type="password" name="password" class="form-control" id="password" />
+                                    <input type="hidden" name="login" value="brok">
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <input id="login" type="button" class="btn  btn-primary btn-block"
+                                            value="دخول" />
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/popperjs/popper.min.js"></script>
+    <script src="assets/bootstrap-5.2.1-dist/js/bootstrap.min.js"></script>
+</body>
+
+</html>

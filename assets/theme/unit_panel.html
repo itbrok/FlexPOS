@@ -1,0 +1,90 @@
+<div class="h-screen flex-grow-1">
+    <!-- Header -->
+    <header class="bg-surface-primary border-bottom pt-6">
+        <div class="container-fluid">
+            <div class="mb-npx">
+                <div class="row align-items-center">
+                    <div class="col-sm-6 col-12 mb-4 mb-sm-0">
+                        <!-- Title -->
+                        <h1 class="h2 mb-6 ls-tight">الوحدات</h1>
+                    </div>
+                    <!-- Actions -->
+                    <div class="col-sm-6 col-12 text-sm-end">
+                        <div class="mx-n1">
+                            <a href="?p=unit&do=add" class="btn d-inline-flex btn-sm btn-primary mx-1">
+                                <span class=" pe-2">
+                                    <i class="bi bi-plus"></i>
+                                </span>
+                                <span>اضافة</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Main -->
+    <main class="py-6 bg-surface-secondary">
+        <div class="container-fluid">
+            <div class="card shadow border-0 mb-7">
+                <div class="card-header">
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-nowrap">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">الوحدة</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="unitslist">
+                        </tbody>
+                    </table>
+                    <div class="card-footer border-0 py-5">
+                        <span id="resCount" class="text-muted text-sm"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+
+<script>
+    limit = 1;
+    max = 0;
+    // Get List of units
+    function getunits(){
+        $.post("", { getunitsList: limit }, function (html) {
+            try {
+                resp = JSON.parse(html);
+            } catch (error) {
+                alertify.error('حدث خطا من السيرفر');
+                return;
+            }
+            if (resp.ok != true) {
+                alertify.error(resp.msg);
+            } else {
+                $("#unitslist").html('');
+                var itemData = resp[0];
+                try {
+                    itemData.forEach(function (item) {
+                        $("#unitslist").append(`<tr id="unit${item.unitID}">`);
+                        $("#unit" + item.unitID).append(`<td><a class="text-heading font-semibold" href="?p=unit&do=view&id=${item.unitID}">${item.unitID}</a></td>`);
+                        $("#unit" + item.unitID).append(`<td>${item.unitType}</td>`);
+                        $("#unit" + item.unitID).append(`<td class="text-end"><button class="btn btn-sm btn-square btn-neutral ms-1 text-danger" onclick="deleteit('unit',${item.unitID},'#unit${item.unitID}')"> <i class="fa fa-trash"></i></button><a href="?p=unit&do=view&id=${item.unitID}" class="btn btn-sm btn-square btn-neutral text-danger-hover"><i class="fa fa-pen"></i></a></td>`);
+                        $("#unitslist").append('</tr>');
+                    });
+                    $("#resCount").html(`عرض ${itemData.length} نتيجة`);
+                    max = itemData[0].resCount;
+                } catch (error) {
+                    alertify.error(error);
+                }
+            }
+        });
+    }
+    $(document).ready(function () {
+        getunits();
+    });
+</script>

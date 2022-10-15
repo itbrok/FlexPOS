@@ -1,0 +1,172 @@
+<div class="h-screen flex-grow-1">
+    <!-- Header -->
+    <header class="bg-surface-primary border-bottom pt-6">
+        <div class="container-fluid">
+            <div class="mb-npx">
+                <div class="row align-items-center">
+                    <div class="col-sm-6 col-12 mb-4 mb-sm-0">
+                        <!-- Title -->
+                        <h1 class="h2 mb-6 ls-tight">تعديل معلومات موظف</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Main -->
+    <main class="py-6 bg-surface-secondary">
+        <div class="container-fluid">
+            <div class="card shadow border-0 mb-7">
+                <div class="card-header">
+                    #
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-lg-4 col-md-6 col-sm-6 mb-3">
+                        <form id="user">
+                            <div class="mb-5">
+                                <label class="form-label" for="name">الاسم</label>
+                                <input type="hidden" name="id" id="id">
+                                <input type="text" class="form-control" name="name" id="name">
+                            </div>
+                            <div class="mb-5">
+                                <label class="form-label" for="username">اسم المستخدم</label>
+                                <input type="text" class="form-control" name="username" id="username">
+                            </div>
+                            <div class="mb-5">
+                                <label class="form-label" for="password">كلمة المرور</label>
+                                <input type="text" class="form-control" name="password" id="password">
+                            </div>
+                            <div>
+                                <label class="form-label" for="printer_id">الطابعة</label>
+                                <select class="form-control form-select-sm" name="printer_id" id="printer_id"></select>
+                            </div>
+                            <div class="form-check m-2" style="display: inline-block;">
+                                <input type="checkbox" class="form-check-input" name="isAdmin" id="isAdmin">
+                                <label class="form-check-label" for="isAdmin">مدير</label>
+                            </div>
+                            <div>
+                                <button id="ok" class="btn btn-primary w-full">موافق</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+
+<script>
+    canAddNew =-1; // ==== 1 Mean new user +.....+ ==== 0 Update user's data
+
+    function getQueryParams(qs) {
+        qs = qs.split('+').join(' ');
+
+        var params = {},
+            tokens,
+            re = /[?&]?([^=]+)=([^&]*)/g;
+
+        while (tokens = re.exec(qs)) {
+            params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+        }
+
+        return params;
+    }
+
+    function getPrinters() {
+        var LastId;
+        // Add classes and unites
+        $.post("", { getprintersList: 1 }, function (html) {
+            try {
+                resp = JSON.parse(html);
+            } catch (error) {
+                alertify.error('حدث خطا من السيرفر');
+                return;
+            }
+            if (resp.ok != true) {
+                alertify.error(resp.msg);
+            } else {
+                $("#printer_id").html('');
+                resp[0].forEach((el) => {
+                    $("#printer_id").prepend(`<option id="printer${el.id}" value="${el.id}">${el.PrinterName}</option>`);
+                    LastId = el.id;
+                });
+            }
+        });
+        return LastId;
+    }
+    
+    $(document).ready(function () {
+        lastPrinterId = getPrinters(); // Add printers list
+
+        var query = getQueryParams(document.location.search);
+
+        var DO = query.do;
+        if(DO == "view"){
+            $.post("", { getUserData: query.id }, function (html) {
+                try {
+                    resp = JSON.parse(html);
+                } catch (error) {
+                    alertify.error('حدث خطا من السيرفر');
+                    return;
+                }
+                if (resp.ok != true) {
+                    alertify.error(resp.msg);
+                } else {
+                    var itemData = resp[0];
+                    $("#name").val(itemData.name);
+                    $("#username").val(itemData.username);
+                    $("#password").val(itemData.password);
+                    if(itemData.printer_id == 0){
+                        selectedId = lastPrinterId;
+                    }else{
+                        selectedId = itemData.printer_id;
+                    }
+                    $(`#printer${selectedId}`).attr("selected", true);
+                    $("#isAdmin").attr("checked", itemData.isAdmin);
+                    $(".card-header").html("#" + itemData.id);
+                    $("#id").val(itemData.id);
+                    canAddNew = 0;
+                }
+            });
+            
+        }else if(DO == "add"){
+            canAddNew = 1;
+            $("h1").html("اضافة موظف جديد");
+        }
+
+
+        $("#ok").click(function(e){
+            e.preventDefault();
+            if(canAddNew == 1){
+                $.post("", 'newUser=1&' + $("#user").serialize(), function (html) {
+                    try {
+                        resp = JSON.parse(html);
+                    } catch (error) {
+                        alertify.error('حدث خطا من السيرفر');
+                        return;
+                    }
+                    if (resp.ok == false) {
+                        alertify.error(resp.msg);
+                    } else {
+                        window.location='?p=users_panel';
+                    }
+                });
+            }else if(canAddNew == 0){
+                $.post("", 'updateUser=1&' + $("#user").serialize() , function (html) {
+                    try {
+                        console.log(html);
+                        resp = JSON.parse(html);
+                    } catch (error) {
+                        alertify.error('حدث خطا من السيرفر');
+                        return;
+                    }
+                    if (resp.ok == false) {
+                        alertify.error(resp.msg);
+                    } else {
+                        window.location='?p=users_panel';
+                    }
+                });
+            }
+        });
+    });
+</script>
