@@ -11,6 +11,7 @@ var update = false;
 var finished = 0;
 var autoPrint = true;
 var GET;
+var UNITES = null;
 
 function updateDiscount(newval) {
     $("#discount").val(newval);
@@ -87,58 +88,75 @@ function totalPrice() {
 }
 
 
-function fixinProb(itemData, count) {
-    //unit
-    $.post("", { "unit": itemData.unit_id }, function (html) {
-        if (product_data_to_show.unit == 1)
-            if (html != false) {
-                try {
-                    resp = JSON.parse(html);
-                } catch (error) {
-                    alertify.error('حدث خطا من السيرفر');
-                    return;
-                }
-                if (resp.ok) {
-                    $("#itm" + count).append('<td class="border-end border-start">' + resp[0] + '</td>');
-                } else {
-                    $("#itm" + count).append('<td class="border-end border-start">غير معروف</td>');
-                }
-            }
-        //IQD  Trans
+function setUnites() {
+    $.post("", { getUnitesAndClass: 1 }, function (html) {
 
-        $.post("", { "iqd": 1 }, function (html) {
-            if (html != false) {
-                try {
-                    resp = JSON.parse(html);
-                } catch (error) {
-                    alertify.error('حدث خطا من السيرفر');
-                    return;
-                }
-                if (resp.ok) {
-                    IQDval = resp[0].val;
-                    if (product_data_to_show.iqd == 1)
-                        $("#itm" + count).append(`<td id="IQDtp${count}" class="border-end border-start">${(iqdRound(itemData.sell_price * resp[0].val)).toLocaleString('en-US')}</td>`);
-                    if (product_data_to_show.inv == 1)
-                        $("#itm" + count).append('<td class="border-end border-start">' + itemData.box + "-" + itemData.shelf + "-" + itemData.corridor + "-" + itemData.warehouse_name + '</td>');
-                } else {
-                    if (product_data_to_show.iqd == 1)
-                        $("#itm" + count).append('<td class="border-end border-start">' + "غير معروف" + '</td>');
-                    if (product_data_to_show.inv == 1)
-                        $("#itm" + count).append('<td class="border-end border-start">' + itemData.box + "-" + itemData.shelf + "-" + itemData.corridor + "-" + itemData.warehouse_name + '</td>');
-                }
+        if (html != false) {
+            try {
+                resp = JSON.parse(html);
+            } catch (error) {
+                alertify.error('حدث خطا من السيرفر');
+                return;
             }
-        });
+            if (resp.ok) {
+                UNITES = Array();
+                resp[0].unit.forEach(function (unit) {
+                    UNITES[unit.unitID] = unit.unitType;
+                });
+            } else {
+                UNITES = null;
+            }
+        }
     });
+}
 
-    //Warehouse
+function fixinProb(itemData, count) {
 
+    //unit
+    if (product_data_to_show.unit == 1) {
+        if (UNITES != null) {
+            $("#itm" + count).append('<td class="border-end border-start">' + UNITES[itemData.unit_id] + '</td>');
+        } else {
+            $("#itm" + count).append('<td class="border-end border-start">غير معروف</td>');
+        }
+    }
+    //IQD  Trans
+
+    $.post("", { "iqd": 1 }, function (html) {
+        if (html != false) {
+            try {
+                resp = JSON.parse(html);
+            } catch (error) {
+                alertify.error('حدث خطا من السيرفر');
+                return;
+            }
+            if (resp.ok) {
+                IQDval = resp[0].val;
+                if (product_data_to_show.iqd == 1)
+                    $("#itm" + count).append(`<td id="IQDtp${count}" class="border-end border-start">${(iqdRound(itemData.sell_price * resp[0].val)).toLocaleString('en-US')}</td>`);
+                if (product_data_to_show.inv == 1)
+                    $("#itm" + count).append('<td class="border-end border-start">' + itemData.box + "-" + itemData.shelf + "-" + itemData.corridor + "-" + itemData.warehouse_name + '</td>');
+            } else {
+                if (product_data_to_show.iqd == 1)
+                    $("#itm" + count).append('<td class="border-end border-start">' + "غير معروف" + '</td>');
+                if (product_data_to_show.inv == 1)
+                    $("#itm" + count).append('<td class="border-end border-start">' + itemData.box + "-" + itemData.shelf + "-" + itemData.corridor + "-" + itemData.warehouse_name + '</td>');
+            }
+        }
+    });
 
 }
 
 
 //to add item
 function addItem(barcode, add = true, qshid = false) {
-    var formData = { "barcode": barcode };
+    client_id = $("#consumer_id").val();
+    if (client_id.length > 0) {
+        reqData = { "barcode": barcode, "_client_id": client_id };
+    } else {
+        reqData = { "barcode": barcode };
+    }
+    var formData = reqData;
     $.post("", formData, function (html) {
         if (html != false) {
             try {
@@ -299,7 +317,6 @@ function main(barcode) {
     } else {
         alertify.error("جهاز الباركود غير مفعل");
     }
-
 }
 
 
@@ -376,6 +393,10 @@ function getQueryParams(qs) {
 
 $(document).ready(function () {
 
+
+    setUnites();
+
+
     GET = getQueryParams(document.location.search);
 
     if (GET.do == "showOrders") {
@@ -418,7 +439,7 @@ $(document).ready(function () {
             printThisOrder();
         }
         orderDetails = getThisOrderDetails();
-        $.post("", { "saveOrder": orderDetails }, function (html) {
+        $.post("", { saveOrder: orderDetails }, function (html) {
             try {
                 data = JSON.parse(html);
                 if (data.ok = false) {
@@ -462,7 +483,13 @@ $(document).ready(function () {
     $("#quick_search").on("keyup", function () {
         var value = $(this).val().toLowerCase();
         if (value.length > 0) {
-            $.post("", { "search": value }, function (html) {
+            client_id = $("#consumer_id").val();
+            if (client_id.length > 0) {
+                reqData = { "search": value, "_client_id": client_id };
+            } else {
+                reqData = { search: value };
+            }
+            $.post("", reqData, function (html) {
                 try {
                     resp = JSON.parse(html);
                 } catch (error) {
@@ -531,9 +558,9 @@ function clear(newOrderId = true) {
     $("#dateBar").html(getDate());
     $("#unFinishedOrdersList").html('');
     $(".prodect-details").html("");
-    try{
+    try {
         $("#allOrdersList").html('');
-    }catch(e){
+    } catch (e) {
 
     }
     if (newOrderId) {
@@ -601,16 +628,16 @@ function barcodeReader() {
 
 function printThisOrder() {
     orderDetails = getThisOrderDetails();
-    $.post('print.php', { "printOrder": orderDetails }, function(html){
+    $.post('print.php', { "printOrder": orderDetails }, function (html) {
         try {
             resp = JSON.parse(html);
         } catch (error) {
             alertify.error("حدث خطا من السيرفر");
         }
 
-        if(resp.ok){
+        if (resp.ok) {
             alertify.success("تم طباعة الطلب");
-        }else{
+        } else {
             alertify.error(resp.msg);
         }
     });
@@ -619,7 +646,7 @@ function printThisOrder() {
 function deleteThisOrder() {
     alertify.confirm('حذف فاتورة', 'هل انت متاكد من انك تريد حذف الفاتورة بشكل نهائي؟',
         function () {
-            $.post("", { deleteOrder: orderID},
+            $.post("", { deleteOrder: orderID },
                 function (data) {
                     try {
                         resp = JSON.parse(data);

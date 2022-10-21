@@ -1,29 +1,32 @@
 <?php
 require_once 'config.php';
-ob_start();
 session_start();
 header("Access-Control-Allow-Origin: *");
+
+
+
+
 function logout() {
     session_destroy();
     header("Location:index.php");
     exit();
 }
 
-/*
+ 
 function keys_exists($keys, array $array){
 	if(is_array($keys)){
-    	$count = 0;
+    	$keysFound = 0;
     	foreach($keys as $i => $key){
         	if(key_exists($key, $array)){
-            	$count++;
+            	$keysFound++;
             }
         }
-        return $count == count($keys);
+        return $keysFound == count($keys);
     }else{
     	return key_exists($keys, $array);
     }
 }
-*/
+ 
 
 function checkLogin($logout = false) {
     if (!isset($_SESSION["user_id"])) {
@@ -35,10 +38,15 @@ function checkLogin($logout = false) {
     return true;
 }
 
-function getProductByBarcode($barcode) {
+function getProductByBarcode($barcode, $client = null) {
     $conn = conn();
-    $stmt = $conn->prepare("SELECT * FROM product WHERE barcode REGEXP ?");
-    $stmt->bind_param("s", $barcode);
+    if ($client == null) {
+        $stmt = $conn->prepare("SELECT * FROM product WHERE barcode REGEXP ?");
+        $stmt->bind_param("s", $barcode);
+    } else {
+        $stmt = $conn->prepare("SELECT `product`.`id`, oldP.`prodect_barcode` AS `barcode`, `number`, `name`, `product`.`quantity`, `buy_price`, oldP.`sold_price` AS `sell_price`, `wholesale_price`, `class_id`, `unit_id`, `warehouse_name`, `corridor`, `shelf`, `box`, `note`, `img` FROM product JOIN (SELECT * FROM order_detail WHERE order_detail.order_id IN (SELECT orders.order_id FROM `orders` WHERE consumer_id = ?)) AS oldP ON oldP.product_id = product.id WHERE product.barcode REGEXP ? ORDER BY oldP.`date` DESC LIMIT 1");
+        $stmt->bind_param("is", $client, $barcode);
+    }
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
@@ -48,6 +56,9 @@ function getProductByBarcode($barcode) {
             }
             return $row;
         }
+    }
+    if ($client != null) {
+        return getProductByBarcode($barcode, null);
     }
     return false;
 }
@@ -76,20 +87,24 @@ function getUnitesAndClass() {
 
 function getProductBySearch($barcode) {
     $conn = conn();
-    $stmt = $conn->prepare("SELECT * FROM product WHERE barcode REGEXP ? or `name` LIKE ? or `number` LIKE ? ORDER BY `name` ASC");
     $likeVal = str_replace(" ", "%", "%" . $barcode . "%");
+    $stmt = $conn->prepare("SELECT * FROM product WHERE barcode REGEXP ? or `name` LIKE ? or `number` LIKE ? ORDER BY `name` ASC");
     $stmt->bind_param("sss", $barcode, $likeVal, $likeVal);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            if (is_array(json_decode($row["barcode"], true))) {
-                $row["barcode"] = json_decode($row["barcode"], true)[0];
-            }
 
-            $rows[] = $row;
+    if ($stmt->execute()) {
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                if (is_array(json_decode($row["barcode"], true))) {
+                    $row["barcode"] = json_decode($row["barcode"], true)[0];
+                }
+
+                $rows[] = $row;
+            }
+            return $rows;
         }
-        return $rows;
+    } else {
+        return false;
     }
     return false;
 }
@@ -135,6 +150,21 @@ function getPriceLeft($consumer_id) {
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             return $row["PriceLeft"];
+        }
+    }
+    return false;
+}
+
+
+function getPricePaid($consumer_id) {
+    $conn = conn();
+    $stmt = $conn->prepare("SELECT SUM(price_paid) AS `PricePaid` FROM orders WHERE consumer_id = ?");
+    $stmt->bind_param("i", $consumer_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            return $row["PricePaid"];
         }
     }
     return false;
@@ -202,6 +232,16 @@ function getIQD($iqd = "iq") {
         while ($row = $result->fetch_assoc()) {
             return $row;
         }
+    }
+    return false;
+}
+
+function setIQD($val, $country = "iq") {
+    $conn = conn();
+    $stmt = $conn->prepare("UPDATE currency SET `val` = ? WHERE country = ?");
+    $stmt->bind_param("ss", $val, $country);
+    if ($stmt->execute()) {
+        return true;
     }
     return false;
 }
@@ -316,7 +356,6 @@ function getUsers($limit) {
             return $rows;
         }
     } catch (\Throwable $th) {
-        file_put_contents("log.txt", file_get_contents("log.txt") . "\n" . $th);
         return false;
     }
 }
@@ -336,7 +375,6 @@ function getproductsList($limit) {
             return $rows;
         }
     } catch (\Throwable $th) {
-        file_put_contents("log.txt", file_get_contents("log.txt") . "\n" . $th);
         return false;
     }
 }
@@ -372,7 +410,6 @@ function getNotifications($limit) {
             return $rows;
         }
     } catch (\Throwable $th) {
-        file_put_contents("log.txt", file_get_contents("log.txt") . "\n" . $th);
         return false;
     }
 }
@@ -445,7 +482,6 @@ function getUnFinishedOrders() {
             return $rows;
         }
     } catch (\Throwable $th) {
-        file_put_contents("log.txt", file_get_contents("log.txt") . "\n" . $th);
         return false;
     }
 }
@@ -460,12 +496,26 @@ function getClients($limit) {
         $result = $stmt->get_result();
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
+                $moneyPaid = getMoneyPaid($row['id']);
+                if ($moneyPaid == false) {
+                    $moneyPaid = 0.000;
+                }
+                $priceLeft = getPriceLeft($row['id']);
+                if ($priceLeft == false) {
+                    $priceLeft = 0.000;
+                }
+                $pricePaid = getPricePaid($row['id']);
+                if ($pricePaid == false) {
+                    $pricePaid = 0.000;
+                }
+                $row['MoneyPaid'] = $moneyPaid + $pricePaid;
+                $row['MoneyLeft'] = $priceLeft;
+                $row['isRed'] = ($priceLeft > 0) ? 1 : 0;
                 $rows[] = $row;
             }
             return $rows;
         }
     } catch (\Throwable $th) {
-        file_put_contents("log.txt", file_get_contents("log.txt") . "\n" . $th);
         return false;
     }
 }
@@ -475,7 +525,7 @@ function getOrders($limit) {
     try {
         $limit = ($limit - 1);
         $conn = conn();
-        $stmt = $conn->prepare("SELECT x.resCount, o.* FROM orders AS o , (select count(*) as resCount FROM orders WHERE orders.isitfinished = 1) AS x WHERE o.isitfinished = 1 LIMIT ?, 10");
+        $stmt = $conn->prepare("SELECT x.resCount, o.* FROM orders AS o , (select count(*) as resCount FROM orders) AS x ORDER BY date DESC LIMIT ?, 20");
         $stmt->bind_param("i", $limit);
         if ($stmt->execute()) {
             $result = $stmt->get_result();
@@ -489,7 +539,118 @@ function getOrders($limit) {
             return false;
         }
     } catch (\Throwable $th) {
-        file_put_contents("log.txt", file_get_contents("log.txt") . "\n" . $th);
+        return false;
+    }
+}
+
+function getAllOrdersByDate($timeRang) {
+    try {
+        if(keys_exists(["from", "to"], $timeRang) == false){
+            return false;
+        }
+        $conn = conn();
+        $stmt = $conn->prepare("SELECT * FROM orders WHERE date >= ? AND date <= ? order by date desc");
+        $stmt->bind_param("ss", $timeRang["from"], $timeRang["to"]);
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $rows[] = $row;
+                }
+                return $rows;
+            }
+        } else {
+            return false;
+        }
+    } catch (\Throwable $th) {
+        return false;
+    }
+}
+
+function getAllOrdersByBarcode($barcode) {
+    try {
+        $conn = conn();
+        $stmt = $conn->prepare("SELECT * FROM orders WHERE order_id IN (SELECT order_id FROM `order_detail` WHERE prodect_barcode = ? GROUP BY order_id) order by date desc");
+        $stmt->bind_param("s", $barcode);
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $rows[] = $row;
+                }
+                return $rows;
+            }
+        } else {
+            return false;
+        }
+        return false;
+    } catch (\Throwable $th) {
+        return false;
+    }
+}
+
+function getAllOrdersByClientName($name) {
+    try {
+        $conn = conn();
+        $stmt = $conn->prepare("SELECT * FROM orders WHERE consumer_id IN (SELECT `id` FROM `consumer` WHERE `name` REGEXP ?) ORDER BY date DESC");
+        $stmt->bind_param("s", $name);
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $rows[] = $row;
+                }
+                return $rows;
+            }
+        } else {
+            return false;
+        }
+        return false;
+    } catch (\Throwable $th) {
+        return false;
+    }
+}
+
+function getAllClientsItems($id) {
+    try {
+        $conn = conn();
+        $stmt = $conn->prepare("SELECT product.name, order_detail.*, orders.price_left, orders.isitfinished FROM `order_detail` JOIN product JOIN orders ON product.id = order_detail.product_id AND orders.order_id = order_detail.order_id WHERE order_detail.order_id IN (SELECT order_id FROM orders WHERE consumer_id = ?) ORDER BY order_detail.date DESC");
+        $stmt->bind_param("s", $id);
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $rows[] = $row;
+                }
+                return $rows;
+            }
+        } else {
+            return false;
+        }
+        return false;
+    } catch (\Throwable $th) {
+        return false;
+    }
+}
+
+function getAllClientsOrders($id) {
+    try {
+        $conn = conn();
+        $stmt = $conn->prepare("SELECT * FROM `orders` WHERE consumer_id = ? ORDER BY date DESC");
+        $stmt->bind_param("s", $id);
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $rows[] = $row;
+                }
+                return $rows;
+            }
+        } else {
+            return false;
+        }
+        return false;
+    } catch (\Throwable $th) {
         return false;
     }
 }
@@ -508,7 +669,6 @@ function getOrderDetails($order_id) {
             return $rows;
         }
     } catch (\Throwable $th) {
-        file_put_contents("log.txt", file_get_contents("log.txt") . "\n" . $th);
         return false;
     }
 }
@@ -526,7 +686,6 @@ function getLastAddedClients() {
             return $rows;
         }
     } catch (\Throwable $th) {
-        file_put_contents("log.txt", file_get_contents("log.txt") . "\n" . $th);
         return false;
     }
 }
@@ -618,7 +777,6 @@ function addNewProduct($product) {
             return ["ok" => true];
         }
     } catch (\Throwable $th) {
-        file_put_contents("log.txt", file_get_contents("log.txt") . "\n" . $th);
         return false;
     }
 }
@@ -656,7 +814,6 @@ function updateProduct($product) {
             }
         }
     } catch (\Throwable $th) {
-        file_put_contents("log.txt", file_get_contents("log.txt") . "\n" . $th);
         return false;
     }
 }
@@ -682,7 +839,6 @@ function addNewUser($username, $password, $name, $printer_id, $isAdmin) {
             return ["ok" => false, "msg" => "خطأ داخلي"];
         }
     } catch (\Throwable $th) {
-        file_put_contents("log.txt", file_get_contents("log.txt") . "\n" . $th);
         return false;
     }
 }
@@ -707,7 +863,6 @@ function updateUserData($username, $password, $name, $id, $printer_id, $isAdmin)
             }
         }
     } catch (\Throwable $th) {
-        file_put_contents("log.txt", file_get_contents("log.txt") . "\n" . $th);
         return false;
     }
 }
@@ -734,7 +889,6 @@ function addNewConsumer($name, $phone_number, $address, $notes) {
             }
         }
     } catch (\Throwable $th) {
-        file_put_contents("log.txt", file_get_contents("log.txt") . "\n" . $th);
         return false;
     }
 }
@@ -754,7 +908,6 @@ function updateConsumer($id, $name, $phone_number, $address, $notes) {
             return ["ok" => true];
         }
     } catch (\Throwable $th) {
-        file_put_contents("log.txt", file_get_contents("log.txt") . "\n" . $th);
         return false;
     }
 }
@@ -765,7 +918,7 @@ function deleteOrder($order_id) {
     $conn = conn();
     $stmt = $conn->prepare("DELETE FROM `orders` WHERE `order_id` = ?");
     $stmt->bind_param("i", $order_id);
-    if($stmt->execute()){
+    if ($stmt->execute()) {
         $stmt->close();
         $stmt = $conn->prepare("DELETE FROM `order_detail` WHERE `order_id` = ?");
         $stmt->bind_param("i", $order_id);
@@ -787,7 +940,6 @@ function saveOrder($orderDetails) {
         $stmt->bind_param("iiiiiddid", $orderDetails["order_id"], $_SESSION["user_id"], $orderDetails["consumer_id"], $orderDetails["items_count"], $orderDetails["discount"], $orderDetails["price_paid"], $orderDetails["price_left"], $orderDetails["isitfinished"], $orderDetails["total_price"]);
         $stmt->execute();
         $stmt->close();
-        file_put_contents("data.txt", "INSERT INTO `orders` (`order_id`, `employee_id`, `consumer_id`, `items_count`, `discount`, `price_paid`, `price_left`, `isitfinished`, `total_price`) VALUES ($orderDetails[order_id], $_SESSION[user_id], $orderDetails[consumer_id], $orderDetails[items_count], $orderDetails[discount], $orderDetails[price_paid], $orderDetails[price_left], $orderDetails[isitfinished], $orderDetails[total_price])");
         $items = $orderDetails["items"];
         foreach ($items as $key => $value) {
             $stmt = $conn->prepare("INSERT INTO `order_detail` (`order_id`, `product_id`, `prodect_barcode`, `quantity`, `sold_price`) VALUES (?,?,?,?,?)");
@@ -802,7 +954,6 @@ function saveOrder($orderDetails) {
 
         return true;
     } catch (\Throwable $th) {
-        file_put_contents("log.txt", file_get_contents("log.txt") . "\n" . $th);
         return false;
     }
 }
@@ -955,25 +1106,25 @@ function change_my_pass($newPass) {
 
 
 /* ---------- Printers ---------- */
-function getPrinterProperty($key){
-    $str = shell_exec('wmic printer get '.$key.' /value');
-    $keys = explode(', ',$key);
+function getPrinterProperty($key) {
+    $str = shell_exec('wmic printer get ' . $key . ' /value');
+    $keys = explode(', ', $key);
     $validValues = [];
-    $fragments = explode(PHP_EOL,$str);
-    foreach($fragments as $fragment){
-        if($fragment == ""){
+    $fragments = explode(PHP_EOL, $str);
+    foreach ($fragments as $fragment) {
+        if ($fragment == "") {
             continue;
         }
-        foreach($keys as $keyname){
-            if (preg_match('/('.$keyname."=".')/i', $fragment)) {
-                $validValues[$keyname][] = str_replace($keyname."=","",$fragment);
+        foreach ($keys as $keyname) {
+            if (preg_match('/(' . $keyname . "=" . ')/i', $fragment)) {
+                $validValues[$keyname][] = str_replace($keyname . "=", "", $fragment);
             }
         }
     }
     return $validValues;
-} 
+}
 
-function addAvailablePrintersToDB(){
+function addAvailablePrintersToDB() {
     $resp = getPrinterProperty("Name");
     $result = "('" . implode("'), ('", $resp['Name']) . "')";
 
@@ -989,42 +1140,42 @@ function addAvailablePrintersToDB(){
 
 /* ---------- Back up ---------- */
 
-function getBackUp(){
+function getBackUp() {
     // Get connection object and set the charset
     $conn = conn();
     $conn->set_charset("utf8");
-    
-    
+
+
     // Get All Table Names From the Database
     $tables = array();
     $sql = "SHOW TABLES";
     $result = mysqli_query($conn, $sql);
-    
+
     while ($row = mysqli_fetch_row($result)) {
         $tables[] = $row[0];
     }
-    
+
     $sqlScript = "";
     foreach ($tables as $table) {
-        
+
         // // Prepare SQLscript for creating table structure
         // $query = "SHOW CREATE TABLE $table";
         // $result = mysqli_query($conn, $query);
         // $row = mysqli_fetch_row($result);
-        
+
         // $sqlScript .= "\n\n" . $row[1] . ";\n\n";
-        
-        
+
+
         $query = "SELECT * FROM $table";
         $result = mysqli_query($conn, $query);
-        
+
         $columnCount = mysqli_num_fields($result);
-        
+
         // Prepare SQLscript for dumping data for each table
-        for ($i = 0; $i < $columnCount; $i ++) {
+        for ($i = 0; $i < $columnCount; $i++) {
             while ($row = mysqli_fetch_row($result)) {
                 $sqlScript .= "INSERT IGNORE INTO $table VALUES(";
-                for ($j = 0; $j < $columnCount; $j ++) {
+                for ($j = 0; $j < $columnCount; $j++) {
                     $row[$j] = $row[$j];
                     $row[$j] = str_replace('"', "'", $row[$j]);
                     if (isset($row[$j])) {
@@ -1039,11 +1190,11 @@ function getBackUp(){
                 $sqlScript .= ");\n";
             }
         }
-        
-        $sqlScript .= "\n"; 
+
+        $sqlScript .= "\n";
     }
-    
-    
+
+
     // Save It As File
     // if(!empty($sqlScript))
     // {
@@ -1052,7 +1203,7 @@ function getBackUp(){
     //     $fileHandler = fopen($backup_file_name, 'w+');
     //     $number_of_lines = fwrite($fileHandler, $sqlScript);
     //     fclose($fileHandler); 
-    
+
     //     // Download the SQL backup file to the browser
     //     header('Content-Description: File Transfer');
     //     header('Content-Type: application/octet-stream');
@@ -1073,31 +1224,31 @@ function getBackUp(){
 
 /* ---------- Restore ---------- */
 
-function restoreMysqlDB($filePath, $conn){
+function restoreMysqlDB($filePath, $conn) {
     $sql = '';
     $error = '';
-    
+
     if (file_exists($filePath)) {
         $lines = file($filePath);
-        
+
         foreach ($lines as $line) {
-            
+
             // Ignoring comments from the SQL script
             if (substr($line, 0, 2) == '--' || $line == '') {
                 continue;
             }
-            
+
             $sql .= $line;
-            
-            if (substr(trim($line), - 1, 1) == ';') {
+
+            if (substr(trim($line), -1, 1) == ';') {
                 $result = mysqli_query($conn, $sql);
-                if (! $result) {
+                if (!$result) {
                     $error .= mysqli_error($conn) . "\n";
                 }
                 $sql = '';
             }
         } // end foreach
-        
+
         if ($error) {
             trigger_error($error);
             return false;
@@ -1139,45 +1290,45 @@ function emptyTable($tableName) {
 
 
 
-class PrintOrder{
+class PrintOrder {
     private array $order;
     private $size77path = "print/template/printtemplate.txt";
-    function __construct($data){
+    function __construct($data) {
         $this->order = $data;
     }
 
-    function get77HTML($data){
+    function get77HTML($data) {
         $re = '/@foreach start(.*)@foreach end/m';
-    
-        $str = str_replace("\n","",file_get_contents($this->size77path));
-    
+
+        $str = str_replace("\n", "", file_get_contents($this->size77path));
+
         preg_match_all($re, $str, $matches, PREG_SET_ORDER, 0);
-    
+
         //table template
         $tableTempleate = $matches[0][1];
-    
+
+
         // prepare table items
         $tableItems = "";
-        foreach($data["items"] as $key => $item){
-            $tableItems .= str_replace(["@item_name", "@item_qty", "@item_price"],[json_decode(file_get_contents("?getitemname=$item[0]"), true)[0], $item[1], $item[2]], $tableTempleate);
+        foreach ($data["items"] as $key => $item) {
+            $tableItems .= str_replace(["@item_name", "@item_qty", "@item_price"], [json_decode(file_get_contents(BASE_URL . "index.php?getitemname=$item[0]"), true)[0], $item[1], $item[2]], $tableTempleate);
         }
-    
+
         // add table items to html scrpit
         $str = str_replace($matches[0][0], $tableItems, $str);
-    
-        $str = str_replace(["@discount", "@total_price", "@company_name"], [" : $$data[discount]" , " : $$data[total_price]", "brok"], $str);
+
+        $str = str_replace(["@discount", "@total_price", "@company_name"], [" : $$data[discount]", " : $$data[total_price]", "brok"], $str);
         return $str;
     }
 
-    function getHtmlString($size=""){
-        switch($size){
+    function getHtmlString($size = "") {
+        switch ($size) {
             case "A4":
-            break;
+                break;
             default:
                 return $this->get77HTML($this->order);
-            break;
+                break;
         }
-        
     }
 }
 
@@ -1185,7 +1336,7 @@ function getPrinterByID($id) {
     $conn = conn();
     $stmt = $conn->prepare("SELECT * FROM printers WHERE id = ?");
     $stmt->bind_param("i", $id);
-    if($stmt->execute()){
+    if ($stmt->execute()) {
         $result = $stmt->get_result();
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -1195,6 +1346,3 @@ function getPrinterByID($id) {
     }
     return false;
 }
-
-
-

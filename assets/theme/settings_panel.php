@@ -60,6 +60,10 @@
                                             <td><input class="form-control form-control-sm mb-3" id="change_wholesale_password" type="password" value="just some text here"></td>
                                         </tr>
                                         <tr class="mb-3">
+                                            <td><span>سعر صرف الدولار</span></td>
+                                            <td><input class="form-control form-control-sm mb-3" id="change_iqd_value" type="text" value="<?= getIQD()['val'] ?>"></td>
+                                        </tr>
+                                        <tr class="mb-3">
                                             <td><span>الصورة الافتراضية للمنتجات</span></td>
                                             <td>
                                                 <div class="row">
@@ -266,6 +270,27 @@
                         alertify.error(resp.msg);
                     } else {
                         alertify.success("تم تحديث رمز سعر الجملة");
+                    }
+                });
+            }, function() {
+                alertify.error('تم الالغاء')
+            });
+        });
+
+        $("#change_iqd_value").click(() => {
+            alertify.prompt('تغيير سعر صرف الدولار', '<div dir="rtl">السعر الجديد الجديد</div>', '', function(evt, value) {
+                $.post("", {change_iqd_value: value}, function(html) {
+                    try {
+                        resp = JSON.parse(html);
+                    } catch (error) {
+                        alertify.error('حدث خطا من السيرفر');
+                        return;
+                    }
+                    if (resp.ok == false) {
+                        alertify.error(resp.msg);
+                    } else {
+                        $("#change_iqd_value").val(value);
+                        alertify.success("تم تحديث سعر صرف الدولار");
                     }
                 });
             }, function() {

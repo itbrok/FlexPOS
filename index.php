@@ -25,7 +25,8 @@ include("functions.php");
 if (@$_POST) {
     if (key_exists("barcode", $_POST)) {
         errorMsg();
-        $data = getProductByBarcode($_POST["barcode"]);
+        $client_id = key_exists("_client_id", $_POST) ? $_POST["_client_id"] : null;
+        $data = getProductByBarcode($_POST["barcode"], $client_id);
         if ($data != false) {
             echo json_encode(["ok" => true, $data]);
         } else {
@@ -127,6 +128,66 @@ if (@$_POST) {
         errorMsg();
         if (checkRole($_SESSION["user_id"], "admin_panel")) {
             $data = getOrders($_POST["getallOrders"]);
+            if (@$data != false) {
+                echo json_encode(["ok" => true, $data]);
+            } else {
+                echo json_encode(["ok" => false, "msg" => "لا توجد فواتير"]);
+            }
+        } else {
+            echo json_encode(["ok" => false, "msg" => "غير مصرح"]);
+        }
+    } elseif (key_exists("getAllOrdersByDate", $_POST)) {  //get Orders for admin by date range
+        errorMsg();
+        if (checkRole($_SESSION["user_id"], "admin_panel")) {
+            $data = getAllOrdersByDate($_POST["getAllOrdersByDate"]);
+            if (@$data != false) {
+                echo json_encode(["ok" => true, $data]);
+            } else {
+                echo json_encode(["ok" => false, "msg" => "لا توجد فواتير"]);
+            }
+        } else {
+            echo json_encode(["ok" => false, "msg" => "غير مصرح"]);
+        }
+    } elseif (key_exists("getAllOrdersByBarcode", $_POST)) {  //get Orders for admin by date range
+        errorMsg();
+        if (checkRole($_SESSION["user_id"], "admin_panel")) {
+            $data = getAllOrdersByBarcode($_POST["getAllOrdersByBarcode"]);
+            if (@$data != false) {
+                echo json_encode(["ok" => true, $data]);
+            } else {
+                echo json_encode(["ok" => false, "msg" => "لا توجد فواتير"]);
+            }
+        } else {
+            echo json_encode(["ok" => false, "msg" => "غير مصرح"]);
+        }
+    } elseif (key_exists("getAllOrdersByClientName", $_POST)) {  //get Orders for admin by client name
+        errorMsg();
+        if (checkRole($_SESSION["user_id"], "admin_panel")) {
+            $data = getAllOrdersByClientName($_POST["getAllOrdersByClientName"]);
+            if (@$data != false) {
+                echo json_encode(["ok" => true, $data]);
+            } else {
+                echo json_encode(["ok" => false, "msg" => "لا توجد فواتير"]);
+            }
+        } else {
+            echo json_encode(["ok" => false, "msg" => "غير مصرح"]);
+        }
+    } elseif (key_exists("getAllClientsOrders", $_POST)) {  //get Orders for admin by one client id
+        errorMsg();
+        if (checkRole($_SESSION["user_id"], "admin_panel")) {
+            $data = getAllClientsOrders($_POST["getAllClientsOrders"]);
+            if (@$data != false) {
+                echo json_encode(["ok" => true, $data]);
+            } else {
+                echo json_encode(["ok" => false, "msg" => "لا توجد فواتير"]);
+            }
+        } else {
+            echo json_encode(["ok" => false, "msg" => "غير مصرح"]);
+        }
+    } elseif (key_exists("getAllClientsItems", $_POST)) {  //get Orders for admin by one client id
+        errorMsg();
+        if (checkRole($_SESSION["user_id"], "admin_panel")) {
+            $data = getAllClientsItems($_POST["getAllClientsItems"]);
             if (@$data != false) {
                 echo json_encode(["ok" => true, $data]);
             } else {
@@ -252,6 +313,18 @@ if (@$_POST) {
                 echo json_encode(["ok" => true, $data]);
             } else {
                 echo json_encode(["ok" => false, "msg" => "لاتوجد بيانات"]);
+            }
+        } else {
+            echo json_encode(["ok" => false, "msg" => "غير مصرح"]);
+        }
+    }  elseif (key_exists("change_iqd_value", $_POST)) { // CHANGE IQD VALUE
+        errorMsg();
+        if (checkRole($_SESSION["user_id"], "admin_panel")) {
+            $data = setIQD($_POST["change_iqd_value"]);
+            if ($data != false) {
+                echo json_encode(["ok" => true]);
+            } else {
+                echo json_encode(["ok" => false, "msg" => "حدث خطا"]);
             }
         } else {
             echo json_encode(["ok" => false, "msg" => "غير مصرح"]);
@@ -566,7 +639,7 @@ if (@$_POST) {
 } else {
     if (checkLogin()) {
 
-        if (@$_GET["logout"] == 1) {
+        if (key_exists("logout", $_GET)) {
             logout();
         } else {
             if (checkRole($_SESSION["user_id"], "admin_panel")) {
@@ -575,6 +648,7 @@ if (@$_POST) {
                     "products_panel"    => "assets/theme/products_panel.html",
                     "settings_panel"    => "assets/theme/settings_panel.php",
                     "clients_panel"     => "assets/theme/clients_panel.html",
+                    "orders_panel"       => "assets/theme/orders_panel.html",
                     "salse_panel"       => "assets/theme/sales_panel.html",
                     "users_panel"       => "assets/theme/users_panel.html",
                     "class_panel"       => "assets/theme/class_panel.html",
@@ -598,7 +672,7 @@ if (@$_POST) {
             }
         }
     } else {
-        if (@$_GET["getitemname"]) {
+        if (key_exists("getitemname", $_GET)) {
             $data = getProductByBarcode($_GET["getitemname"]);
             if ($data != false) {
                 echo json_encode(["ok" => true, $data["name"]]);

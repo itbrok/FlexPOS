@@ -39,6 +39,8 @@
                                 <th scope="col">الاسم</th>
                                 <th scope="col">العنوان</th>
                                 <th scope="col">اضيف بواسطة</th>
+                                <th scope="col">المدفوع</th>
+                                <th scope="col">المتبقي</th>
                                 <th scope="col">التاريخ</th>
                                 <th></th>
                             </tr>
@@ -66,10 +68,12 @@
     function addDataToTable(data) {
         $("#clientslist").html('');
         data.forEach(function (item) {
-            $("#clientslist").append(`<tr id="client${item.id}">`);
+            $("#clientslist").append(`<tr id="client${item.id}" class="${(item.isRed == 1) ? "bg-red-200" : ""}">`);
             $("#client" + item.id).append(`<td><a class="text-heading font-semibold" href="?p=client&do=view&id=${item.id}">${item.name}</a></td>`);
             $("#client" + item.id).append(`<td>${item.address}</td>`);
             $("#client" + item.id).append(`<td><a class="text-heading font-semibold" href="?p=user&do=view&id=${item.addbyid}">${item.addby}</a></td>`);
+            $("#client" + item.id).append(`<td>${item.MoneyPaid}</td>`);
+            $("#client" + item.id).append(`<td>${item.MoneyLeft}</td>`);
             $("#client" + item.id).append(`<td>${item.date}</td>`);
             $("#client" + item.id).append(`<td class="text-end"><button class="btn btn-sm btn-square btn-neutral ms-1 text-danger" onclick="deleteit('client',${item.id}, '#client${item.id}')"> <i class="fa fa-trash"></i></button><a href="?p=client&do=view&id=${item.id}" class="btn btn-sm btn-square btn-neutral text-danger-hover"><i class="fa fa-pen"></i></a></td>`);
             $("#clientslist").append('</tr>');

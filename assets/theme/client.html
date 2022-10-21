@@ -17,32 +17,86 @@
         <div class="container-fluid">
             <div class="card shadow border-0 mb-7">
                 <div class="card-header">
-                    #
+                    <ul class="nav nav-tabs" role="tablist" id="tabs">
+                        <li class="nav-item ms-4" role="presentation">
+                            <button class="nav-link orders-tab active" data-bs-toggle="tab"
+                                data-bs-target="#generalinfo" type="button" role="tab" aria-selected="true">معلومات
+                                اساسية</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link orders-tab" data-bs-toggle="tab" data-bs-target="#orders"
+                                type="button" role="tab" aria-selected="false" tabindex="-1">الفواتير</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link orders-tab" data-bs-toggle="tab" data-bs-target="#items"
+                                type="button" role="tab" aria-selected="false" tabindex="-1">المواد</button>
+                        </li>
+                    </ul>
                 </div>
-                <div class="row justify-content-center">
-                    <div class="col-lg-4 col-md-6 col-sm-6 mb-3">
-                        <form id="client">
-                            <div class="mb-5">
-                                <label class="form-label" for="name">الاسم</label>
-                                <input type="hidden" name="id" id="id">
-                                <input type="text" class="form-control" name="name" id="name">
-                            </div>
-                            <div class="mb-5">
-                                <label class="form-label" for="phone_number">رقم الهاتف</label>
-                                <input type="tel" class="form-control" name="phone_number" id="phone_number">
-                            </div>
-                            <div class="mb-5">
-                                <label class="form-label" for="address">العنوان</label>
-                                <textarea class="form-control" name="address" id="address"></textarea>
-                            </div>
-                            <div class="mb-5">
-                                <label class="form-label" for="notes">ملاحظات</label>
-                                <textarea class="form-control" name="notes" id="notes"></textarea>
-                            </div>
-                            <div>
-                                <button id="ok" class="btn btn-primary w-full">موافق</button>
-                            </div>
-                        </form>
+                <div>
+                    <div class="tab-pane fade row justify-content-center active show" id="generalinfo" role="tabpanel">
+                        <div class="col-lg-4 col-md-6 col-sm-6 mb-3">
+                            <form id="client">
+                                <div class="mb-5">
+                                    <label class="form-label" for="name">الاسم</label>
+                                    <input type="hidden" name="id" id="id">
+                                    <input type="text" class="form-control" name="name" id="name">
+                                </div>
+                                <div class="mb-5">
+                                    <label class="form-label" for="phone_number">رقم الهاتف</label>
+                                    <input type="tel" class="form-control" name="phone_number" id="phone_number">
+                                </div>
+                                <div class="mb-5">
+                                    <label class="form-label" for="address">العنوان</label>
+                                    <textarea class="form-control" name="address" id="address"></textarea>
+                                </div>
+                                <div class="mb-5">
+                                    <label class="form-label" for="notes">ملاحظات</label>
+                                    <textarea class="form-control" name="notes" id="notes"></textarea>
+                                </div>
+                                <div>
+                                    <button id="ok" class="btn btn-primary w-full">موافق</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="orders" role="tabpanel" style="display: none;">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-nowrap" dir="rtl">
+                                <thead>
+                                    <tr>
+                                        <th>رقم الفاتوره</th>
+                                        <th>عدد المواد</th>
+                                        <th>الخصم</th>
+                                        <th>المدفوع</th>
+                                        <th>المتبقي</th>
+                                        <th>المجموع</th>
+                                        <th>معلقة</th>
+                                        <th>التاريخ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allOrdersList">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="items" role="tabpanel" style="display: none;">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-nowrap" dir="rtl">
+                                <thead>
+                                    <tr>
+                                        <th>اسم المادة</th>
+                                        <th>رقم الفاتوره</th>
+                                        <th>الكمية</th>
+                                        <th>سعر البيع</th>
+                                        <th>معلقة</th>
+                                        <th>التاريخ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allItemsList">
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -52,7 +106,7 @@
 
 
 <script>
-    canAddNew =-1; // ==== 1 Mean new client +.....+ ==== 0 Update client's data
+    canAddNew = -1; // ==== 1 Mean new client +.....+ ==== 0 Update client's data
 
     function getQueryParams(qs) {
         qs = qs.split('+').join(' ');
@@ -68,20 +122,75 @@
         return params;
     }
 
-    
-    
+
+    function addOrdersDataToTable(data) {
+        data.forEach(function (item) {
+            $("#allOrdersList").append(`<tr class="${(item.price_left > 0 && item.isitfinished == 1) ? "bg-red-200" : ((item.isitfinished == 1) ? "" : "bg-green-200")}" onclick="window.location='?p=salse_panel&ev=1&eval=loadOrder(${item.order_id},false)'" id="qsitm${item.order_id}">`);
+            $("#qsitm" + item.order_id).append('<td>' + item.order_id + '</td>');
+            $("#qsitm" + item.order_id).append('<td>' + item.items_count + '</td>');
+            $("#qsitm" + item.order_id).append('<td>' + item.discount + '</td>');
+            $("#qsitm" + item.order_id).append('<td>' + item.price_paid + '</td>');
+            $("#qsitm" + item.order_id).append('<td>' + item.price_left + '</td>');
+            $("#qsitm" + item.order_id).append('<td>' + item.total_price + '</td>');
+            $("#qsitm" + item.order_id).append('<td>' + ((item.isitfinished == 0) ? "نعم" : "لا")  + '</td>');
+            $("#qsitm" + item.order_id).append('<td>' + item.date + '</td>');
+            $("#allOrdersList").append('</tr>');
+        });
+    }
+    function addItemsDataToTable(data) {
+        data.forEach(function (item) {
+            $("#allItemsList").append(`<tr class="${(item.price_left > 0 && item.isitfinished == 1) ? "bg-red-200" : ((item.isitfinished == 1) ? "" : "bg-green-200")}" id="itm${item.order_id + "" + item.product_id}">`);
+            $("#itm" + item.order_id + "" + item.product_id).append(`<td><a href="?p=product&do=view&id=${item.product_id}">` + item.name + '</a></td>');
+            $("#itm" + item.order_id + "" + item.product_id).append(`<td><a href="?p=salse_panel&ev=1&eval=loadOrder(${item.order_id},false)">` + item.order_id + '</a></td>');
+            $("#itm" + item.order_id + "" + item.product_id).append('<td>' + item.quantity + '</td>');
+            $("#itm" + item.order_id + "" + item.product_id).append('<td>' + item.sold_price + '</td>');
+            $("#itm" + item.order_id + "" + item.product_id).append('<td>' + ((item.isitfinished == 0) ? "نعم" : "لا")  + '</td>');
+            $("#itm" + item.order_id + "" + item.product_id).append('<td>' + item.date + '</td>');
+            $("#allItemsList").append('</tr>');
+        });
+    }
+
+    // Get List of orders
+    function getData(data, callback) {
+        $.post("", data, function (html) {
+            try {
+                resp = JSON.parse(html);
+            } catch (error) {
+                alertify.error('حدث خطا من السيرفر');
+                return;
+            }
+            if (resp.ok != true) {
+                alertify.error(resp.msg); // Print Error MSG
+            } else {
+                var itemData = resp[0];
+                callback(itemData);
+            }
+        });
+    }
+
     $(document).ready(function () {
+
+        $(".orders-tab").click(function () {
+            document.querySelectorAll("[role=tabpanel]").forEach((el) => {
+                if (("#" + $(el).attr("id")) == $(this).attr("data-bs-target")) {
+                    $(el).show();
+                } else {
+                    $(el).hide();
+                }
+            });
+        });
+
         var query = getQueryParams(document.location.search);
 
         var DO = query.do;
-        if(DO == "view"){
+        if (DO == "view") {
             $.post("", { getconsumer: query.id }, function (html) {
                 try {
-    resp = JSON.parse(html);
-} catch (error) {
-    alertify.error('حدث خطا من السيرفر');
-    return;
-}
+                    resp = JSON.parse(html);
+                } catch (error) {
+                    alertify.error('حدث خطا من السيرفر');
+                    return;
+                }
                 if (resp.ok != true) {
                     alertify.error(resp.msg);
                 } else {
@@ -89,22 +198,26 @@
                     $("#name").val(itemData.name);
                     $("#phone_number").val(itemData.phone_number);
                     $("#address").html(itemData.address);
-                    $(".card-header").html("#" + itemData.id);
                     $("#id").val(itemData.id);
                     $("#notes").html(itemData.notes);
                     canAddNew = 0;
                 }
             });
-            
-        }else if(DO == "add"){
+            getData({getAllClientsOrders : query.id}, addOrdersDataToTable);
+            getData({getAllClientsItems : query.id}, addItemsDataToTable);
+
+        } else if (DO == "add") {
             canAddNew = 1;
             $("h1").html("اضافة عميل جديد");
+            $("#items").remove();
+            $("#orders").remove();
+            $("#tabs").remove();
         }
 
 
-        $("#ok").click(function(e){
+        $("#ok").click(function (e) {
             e.preventDefault();
-            if(canAddNew == 1){
+            if (canAddNew == 1) {
                 $.post("", 'newconsumer=1&' + $("form").serialize(), function (html) {
                     try {
                         resp = JSON.parse(html);
@@ -115,11 +228,11 @@
                     if (resp.ok == false) {
                         alertify.error(resp.msg);
                     } else {
-                        window.location='?p=clients_panel';
+                        window.location = '?p=clients_panel';
                     }
                 });
-            }else if(canAddNew == 0){
-                $.post("", 'updateconsumer=1&' + $("#client").serialize() , function (html) {
+            } else if (canAddNew == 0) {
+                $.post("", 'updateconsumer=1&' + $("#client").serialize(), function (html) {
                     console.log(html);
                     try {
                         resp = JSON.parse(html);
@@ -130,7 +243,7 @@
                     if (resp.ok == false) {
                         alertify.error(resp.msg);
                     } else {
-                        window.location='?p=clients_panel';
+                        window.location = '?p=clients_panel';
                     }
                 });
             }

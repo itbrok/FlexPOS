@@ -9,7 +9,7 @@ function errorMsg() {
         exit();
     }
 }
-
+define("BASE_URL", str_replace(basename(__FILE__),"","http://" . $_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME']));
 
 function printOrder($data){
     if($data){

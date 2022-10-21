@@ -21,8 +21,31 @@
     <title>Flex - لوحة التحكم</title>
 </head>
 
-<body class="noselect">
-    <!-- Banner -->
+<body>
+
+<script>
+    //SORT TABLES
+    function sortTables() {
+        const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+
+        const comparer = (idx, asc) => (a, b) => ((v1, v2) => 
+            v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+            )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+        // do the work...
+        document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+        const table = th.closest('table');
+        const tbody = table.querySelector('tbody');
+        Array.from(tbody.querySelectorAll('tr'))
+            .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+            .forEach(tr => tbody.appendChild(tr) );
+        })));
+    }
+</script>
+
+
+
+<!-- Banner -->
     <!-- <div class="btn w-full btn-primary text-truncate rounded-0 py-2 border-0 position-relative" style="z-index: 1000;">
         <strong>Crafted with Webpixels CSS:</strong> The design system for Bootstrap 5. Browse all components →
 </div> -->
@@ -253,6 +276,7 @@
             window.location.reload();
         }
         $(document).ready(function () {
+            sortTables();
             $("#notifs").click(function () {
                 $.post("", { getnotifications: 1 }, function (html) {
                     try {
