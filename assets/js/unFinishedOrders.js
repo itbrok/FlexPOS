@@ -25,7 +25,7 @@ $(document).ready(function(){
                     $("#qsitm" + item.order_id).append('<td>' + item.discount + '</td>');
                     $("#qsitm" + item.order_id).append('<td>' + item.total_price + '</td>');
                     if(item.consumer_id != 0){
-                        $.post("", {"getconsumer":item.consumer_id}, (html) =>{
+                        $.post("", {getconsumer:item.consumer_id}, (html) =>{
                             consumerData = JSON.parse(html)[0][0];
                             $("#qsitm" + item.order_id).append('<td>' + consumerData.name + '</td>');
                             $("#qsitm" + item.order_id).append('<td>' + item.date + '</td>');

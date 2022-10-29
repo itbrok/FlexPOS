@@ -68,6 +68,11 @@
                         </div>
                     </div>
                 </div>
+                <div class="card-footer border-0 py-5">
+                    <span class="text-sm ordersRes">
+
+                    </span>
+                </div>
                 <div class="table-responsive">
                     <table class="table table-hover table-nowrap" dir="rtl">
                         <thead>
@@ -87,7 +92,11 @@
                         </tbody>
                     </table>
                 </div>
+
                 <div class="card-footer border-0 py-5">
+                    <span class="mb-3 text-sm ordersRes">
+
+                    </span>
                     <a class="btn-sm btn-dark border-0 shadow-none gradient-bottom-right start-teal-500 end-blue-500 start-pink-500-hover end-cyan-500-hover"
                         id="back"><i class='col fa fa-angle-right'></i></a>
                     <a class="btn-sm btn-dark border-0 shadow-none gradient-bottom-right start-teal-500 end-blue-500 start-pink-500-hover end-cyan-500-hover"
@@ -104,6 +113,8 @@
 
     function addDataToTable(data) {
         $("#clientslist").html('');
+        totalPaid = 0;
+        totalLeft = 0;
         data.forEach(function (item) {
             $("#allOrdersList").append(`<tr class="${(item.price_left > 0 && item.isitfinished == 1) ? "bg-red-200" : ((item.isitfinished == 1) ? "" : "bg-green-200")}" onclick="window.location='?p=salse_panel&ev=1&eval=loadOrder(${item.order_id},false)'" id="qsitm${item.order_id}">`);
             $("#qsitm" + item.order_id).append('<td>' + item.order_id + '</td>');
@@ -125,7 +136,10 @@
                 $("#qsitm" + item.order_id).append('<td>' + item.date + '</td>');
             }
             $("#allOrdersList").append('</tr>');
+            totalPaid += parseInt(item.price_paid);
+            totalLeft += parseInt(item.price_left);
         });
+        $(".ordersRes").html(`عدد الفواتير : ${data.length} مجموع الواصل : ${totalPaid} مجموع المتبقي : ${totalLeft}`);
     }
 
     limit = 1;

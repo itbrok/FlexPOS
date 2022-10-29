@@ -151,7 +151,7 @@ CREATE TABLE `product` (
   `id` int(30) NOT NULL,
   `barcode` longtext NOT NULL,
   `number` varchar(30) NOT NULL,
-  `name` varchar(90) NOT NULL,
+  `name` TEXT,FULLTEXT(`name`),
   `quantity` int(12) NOT NULL,
   `buy_price` decimal(30,3) NOT NULL,
   `sell_price` decimal(30,3) NOT NULL,
@@ -376,6 +376,8 @@ ALTER TABLE `printers`
 ALTER TABLE `product`
   MODIFY `id` int(30) NOT NULL AUTO_INCREMENT;
 
+
+ALTER TABLE `product` ADD UNIQUE(`number`);
 --
 -- AUTO_INCREMENT for table `role`
 --

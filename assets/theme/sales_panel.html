@@ -3,7 +3,7 @@
     window.onbeforeunload = function () {
         return "";
     }
-    var product_data_to_show = {del:1, number:0, name:1, qty:1, sell_price:1, tot:0, unit:0, iqd:0, inv:1};
+    var product_data_to_show = { del: 1, number: 0, name: 1, qty: 1, sell_price: 1, tot: 0, unit: 0, iqd: 0, inv: 1 };
 </script>
 <div class="h-screen flex-grow-1">
     <!-- Header -->
@@ -34,8 +34,9 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col">
-                                                    <span
-                                                        class="h6 font-semibold text-muted text-sm d-block mb-2">التاريخ</span>
+                                                    <span id="clientName"
+                                                        class="h6 font-semibold text-muted text-sm d-block mb-2">العميل
+                                                        : عميل افتراضي</span>
                                                     <span id="dateBar" class="text-xs mb-0">7/6/2001</span>
                                                 </div>
                                                 <div class="col-auto">
@@ -75,8 +76,8 @@
                                     </div>
                                 </div>
                                 <!-- Discount -->
-                                <div class="col-xl-3 col-sm-6 col-12" data-bs-toggle="modal"
-                                    data-bs-target="#numPad" onclick="saveParam('updateDiscount(newval)')">
+                                <div class="col-xl-3 col-sm-6 col-12" data-bs-toggle="modal" data-bs-target="#numPad"
+                                    onclick="saveParam('updateDiscount(newval)')">
                                     <div class="card shadow border-0">
                                         <div class="card-body">
                                             <div class="row">
@@ -85,8 +86,8 @@
                                                         class="h6 font-semibold text-muted text-sm d-block mb-2">خصم</span>
                                                     <span class="mb-0"><input dir="rtl" id="discount" type="text"
                                                             style="padding: 0 12px 0 0;"
-                                                            class="form-control text-sm shadow-none rounded-pill" value="0"
-                                                            disabled></span>
+                                                            class="form-control text-sm shadow-none rounded-pill"
+                                                            value="0" disabled></span>
                                                 </div>
                                                 <div class="col-auto">
                                                     <div
@@ -110,7 +111,8 @@
                                                     </div>
                                                     <div class="row mt-1">
                                                         <div class="b h3 text-danger col">عراقي</div>
-                                                        <span id="pricetotalIQD" class="mb-0 h5 text-danger col">0</span>
+                                                        <span id="pricetotalIQD"
+                                                            class="mb-0 h5 text-danger col">0</span>
                                                     </div>
                                                 </div>
                                                 <div class="col-auto">
@@ -127,7 +129,7 @@
                         </div> <!-- box.// -->
                     </div>
                     <div class="row" style="margin-left: 0 !important;">
-                        
+
                         <div class="col">
                             <div class="row">
                                 <div class="row">
@@ -137,21 +139,28 @@
                                                 <div class="col mt-4 me-2" style="max-width: 22%;">
                                                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                                                         <li class="nav-item ms-4" role="presentation">
-                                                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#q_search" type="button" role="tab" aria-selected="true">المواد</button>
+                                                            <button class="nav-link active" data-bs-toggle="tab"
+                                                                data-bs-target="#q_search" type="button" role="tab"
+                                                                aria-selected="true">المواد</button>
                                                         </li>
                                                         <li class="nav-item" role="presentation">
-                                                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#_client" type="button" role="tab" aria-selected="false">العميل</button>
+                                                            <button class="nav-link" data-bs-toggle="tab"
+                                                                data-bs-target="#_client" type="button" role="tab"
+                                                                aria-selected="false">العميل</button>
                                                         </li>
                                                     </ul>
                                                     <div class="tab-content">
-                                                        <div class="tab-pane fade show active" id="q_search" role="tabpanel">
-                                                            <input type="search" style="padding-right: 2.25rem !important;"
-                                                                class="form-control form-control-sm mt-1 p-2 text-sm font-semibold shadow-none rounded-pill" id="quick_search" placeholder="بحث"
-                                                                autocomplete="off">
+                                                        <div class="tab-pane fade show active" id="q_search"
+                                                            role="tabpanel">
+                                                            <input type="search"
+                                                                style="padding-right: 2.25rem !important;"
+                                                                class="form-control form-control-sm form-control-sm mt-1 p-2 text-sm font-semibold shadow-none rounded-pill"
+                                                                id="quick_search" placeholder="بحث" autocomplete="off">
                                                             <div class="row">
                                                                 <div style="overflow: auto; max-height: 260px;">
                                                                     <table class="table table-striped table-hover">
-                                                                        <tbody id="quickSearchItems" style="max-width: 19%;">
+                                                                        <tbody id="quickSearchItems"
+                                                                            style="max-width: 19%;">
                                                                         </tbody>
                                                                     </table>
                                                                 </div>
@@ -160,11 +169,14 @@
                                                         <div class="tab-pane fade" id="_client" role="tabpanel">
                                                             <div dir="rtl">
                                                                 <div>
-                                                                    <input type="search" style="padding-right: 2.25rem !important;"
-                                                                class="form-control form-control-sm mt-1 p-2 text-sm font-semibold shadow-none rounded-pill sellForConsumerSearchBar" placeholder="الاسم" autocomplete="off">
+                                                                    <input type="search"
+                                                                        style="padding-right: 2.25rem !important;"
+                                                                        class="form-control form-control-sm form-control-sm mt-1 p-2 text-sm font-semibold shadow-none rounded-pill sellForConsumerSearchBar"
+                                                                        placeholder="الاسم" autocomplete="off">
                                                                     <div class="row">
                                                                         <div style="overflow: auto; max-height: 200px;">
-                                                                            <table class="table table-striped table-hover">
+                                                                            <table
+                                                                                class="table table-striped table-hover">
                                                                                 <tbody class="quickConsumerSearch">
                                                                                 </tbody>
                                                                             </table>
@@ -174,11 +186,13 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
-                                                    
+
+
                                                 </div>
-                                                <span class="col" id="cart" style="overflow: auto; min-height: 340px; max-height: 340px;">
-                                                    <table id="orderTable" class="table text-center table-striped table-hover">
+                                                <span class="col" id="cart"
+                                                    style="overflow: auto; min-height: 340px; max-height: 340px;">
+                                                    <table id="orderTable"
+                                                        class="table text-center table-striped table-hover">
                                                         <thead>
                                                             <tr>
                                                                 <th width="7%" scope="col">حذف</th>
@@ -202,47 +216,47 @@
                 </div>
                 <div class="mt-3">
                     <div class="form-check form-switch ms-2" style="display: inline-block;">
-                        <input class="form-check-input" onclick="autoPrintSt()" type="checkbox" role="switch" id="autoPrint" checked>
+                        <input class="form-check-input" onclick="autoPrintSt()" type="checkbox" role="switch"
+                            id="autoPrint" checked>
                         <label class="text-sm me-2 ms-2" for="autoPrint">طباعة تلقائيه</label>
                     </div>
                     <div class="pb-3 form-check form-switch me-2" style="display: inline-flex;">
                         <label for="addByBarocde" class="text-sm me-2 ms-2">جهاز الباركود</label>
-                        <input id="addByBarocde" class="form-check-input" type="checkbox" role="switch" onchange="barcodeReaderSt()" checked>
+                        <input id="addByBarocde" class="form-check-input" type="checkbox" role="switch"
+                            onchange="barcodeReaderSt()" checked>
                     </div>
                     <div class="mt-3">
                         <button id="sellNowForNoClient"
-                        class="me-3 text-xs btn paidequaltotal sellNow btn-primary btn-round btn-block"><i
-                            class="fa fa-shopping-bag"></i> بيع</button>
+                            class="me-3 text-xs btn btn-sm paidequaltotal sellNow btn-primary btn-round btn-block"><i
+                                class="fa fa-shopping-bag"></i> بيع</button>
 
                         <button id="sellForConBtn"
-                            class="me-3 text-xs btn btn-outline-success btn-round btn-block"
-                            data-bs-toggle="modal" data-bs-target="#sellForConsumer"><i
-                                class="fa fa-user"></i> بيع لعميل </button>
+                            class="me-3 text-xs btn btn-sm btn-outline-success btn-round btn-block"
+                            data-bs-toggle="modal" data-bs-target="#sellForConsumer"><i class="fa fa-user"></i> بيع
+                            لعميل </button>
 
-                        <button id="orderhold"
-                            class="me-3 text-xs btn btn-secondary btn-round btn-block"><i
+                        <button id="orderhold" class="me-3 text-xs btn btn-sm btn-secondary btn-round btn-block"><i
                                 class="far fa-clock"></i> تعليق</button>
 
                         <button id="unFinishedOrdersBtn"
-                            class="me-3 text-xs btn btn-outline-dark btn-round btn-block"><i
+                            class="me-3 text-xs btn btn-sm btn-outline-dark btn-round btn-block"><i
                                 class="fas fa-list"></i> عرض المعلق</button>
 
                         <button data-bs-toggle="modal" data-bs-target="#payDebt"
-                            class="me-3 text-xs btn btn-danger btn-round btn-block"><i
+                            class="me-3 text-xs btn btn-sm btn-danger btn-round btn-block"><i
                                 class="fa fa-file-invoice-dollar"></i> تسديد فاتوره </button>
 
-                        <button id="clear"
-                            class="me-3 text-xs btn btn-outline-danger btn-round btn-block"><i
+                        <button id="clear" class="me-3 text-xs btn btn-sm btn-outline-danger btn-round btn-block"><i
                                 class="fa fa-times-circle"></i> الغاء</button>
 
-                        <button onclick="printThisOrder()"
-                            class="me-3 text-xs btn btn-success btn-round"><i class="fa fa-print"></i>
+                        <button onclick="printThisOrder()" class="me-3 text-xs btn btn-sm btn-success btn-round"><i
+                                class="fa fa-print"></i>
                             طباعة</button>
 
                         <button id="allOrdersBtn"
-                            class="me-3 text-xs btn btn-outline-dark btn-round btn-block"><i
+                            class="me-3 text-xs btn btn-sm btn-outline-dark btn-round btn-block"><i
                                 class="fas fa-list"></i> عرض الفواتير</button>
-                        <button onclick="deleteThisOrder()" class="me-3 text-xs btn btn-danger btn-round"><i
+                        <button onclick="deleteThisOrder()" class="me-3 text-xs btn btn-sm btn-danger btn-round"><i
                                 class="fa fa-trash"></i>
                             حذف</button>
                     </div>
@@ -276,9 +290,9 @@
                                     </div>
                                     <div class="form-floating mb-3 payDebtprice_paid" data-bs-toggle="modal"
                                         data-bs-target="#numPad" onclick="saveParam('updateDebtPricePaid(newval)')">
-                                        <input type="text" class="form-control bg-white" name="price_paid"
-                                            id="payDebtprice_paid" placeholder="المبلغ المدفوع (دولار)"
-                                            autocomplete="off" disabled>
+                                        <input type="text" class="form-control form-control-sm bg-white"
+                                            name="price_paid" id="payDebtprice_paid"
+                                            placeholder="المبلغ المدفوع (دولار)" autocomplete="off" disabled>
                                         <label for="payDebtprice_paid">المبلغ المدفوع (دولار)</label>
                                     </div>
                                     <div class="form-floating mb-3">
@@ -288,7 +302,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="payDebtCloseButton btn btn-secondary"
+                                    <button type="button" class="payDebtCloseButton btn btn-sm btn-secondary"
                                         data-bs-dismiss="modal">اغلاق</button>
                                     <button type="button" id="payDebtSaveButton" class="btn btn-primary"
                                         data-bs-dismiss="modal" disabled>موافق</button>
@@ -320,11 +334,11 @@
                             </div>
                             <div class="modal-body col">
                                 <div dir="rtl">
-                                    <div class="form-floating mb-3">
+                                    <div class="form-floating mb-3" id="sellForConsumerForm">
                                         <input type="hidden" id="consumer_id" name="consumer_id">
-                                        <input type="text" class="form-control sellForConsumerSearchBar" name="name"
-                                            id="sellForConsumerSearchBar" placeholder="الاسم" autocomplete="off"
-                                            required>
+                                        <input type="text" class="form-control form-control-sm sellForConsumerSearchBar"
+                                            name="name" id="sellForConsumerSearchBar" placeholder="الاسم"
+                                            autocomplete="off" required>
                                         <label for="sellForConsumerSearchBar">الاسم</label>
                                         <div class="row">
                                             <div style="overflow: auto; max-height: 200px;">
@@ -337,7 +351,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="sellForConsumerCloseButton btn btn-secondary"
+                                    <button type="button" class="sellForConsumerCloseButton btn btn-sm btn-secondary"
                                         data-bs-dismiss="modal">اغلاق</button>
                                     <button type="button" id="debt" class="btn btn-outline-danger"
                                         data-bs-toggle="modal" data-bs-target="#debtPad">ذمة</button>
@@ -390,9 +404,8 @@
                                         <input type="hidden" name="newconsumer" value="1">
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="NewConsumerCloseButton btn btn-secondary"
-                                            data-bs-toggle="modal" data-bs-target="#sellForConsumer"
-                                            data-bs-dismiss="modal">اغلاق</button>
+                                        <button type="button" class="NewConsumerCloseButton btn btn-sm btn-secondary"
+                                            onclick="showsellpad()" data-bs-dismiss="modal">اغلاق</button>
                                         <button type="submit" id="NewConsumerSaveButton"
                                             class="btn btn-primary">حفظ</button>
                                     </div>
@@ -420,9 +433,9 @@
                                 <div dir="rtl">
                                     <div class="form-floating mb-3 price_paid" data-bs-toggle="modal"
                                         data-bs-target="#numPad" onclick="saveParam('updatePricePaid(newval)')">
-                                        <input type="text" class="form-control bg-white" name="price_paid"
-                                            id="price_paid" placeholder="المبلغ المدفوع (دولار)" autocomplete="off"
-                                            disabled>
+                                        <input type="text" class="form-control form-control-sm bg-white"
+                                            name="price_paid" id="price_paid" placeholder="المبلغ المدفوع (دولار)"
+                                            autocomplete="off" disabled>
                                         <label for="price_paid">المبلغ المدفوع (دولار)</label>
                                     </div>
                                     <div class="form-floating mb-3">
@@ -432,7 +445,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="debtPadCloseButton btn btn-secondary"
+                                    <button type="button" class="debtPadCloseButton btn btn-sm btn-secondary"
                                         data-bs-dismiss="modal">اغلاق</button>
                                     <button type="button" id="debtPadSaveButton"
                                         class="btn paidwithleft sellNow btn-primary"
@@ -480,8 +493,8 @@
                 </div>
                 <!-- عرض جميع الفواتير -->
                 <script src="assets/js/allOrders.js"></script>
-                <div class="modal fade" id="allOrders" dir="ltr" tabindex="-1"
-                    aria-labelledby="allOrdersLabel" aria-hidden="true">
+                <div class="modal fade" id="allOrders" dir="ltr" tabindex="-1" aria-labelledby="allOrdersLabel"
+                    aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content" style="background-color: #ededed;">
                             <div class="modal-header">
@@ -508,8 +521,10 @@
                                         </table>
                                     </div>
                                     <div class="card-footer border-0 py-5" dir="rtl">
-                                        <a class="btn-sm btn-dark border-0 shadow-none gradient-bottom-right start-teal-500 end-blue-500 start-pink-500-hover end-cyan-500-hover" id="back"><i class='col fa fa-angle-right'></i></a>
-                                        <a class="btn-sm btn-dark border-0 shadow-none gradient-bottom-right start-teal-500 end-blue-500 start-pink-500-hover end-cyan-500-hover" id="next"><i class='col fa fa-angle-left'></i></a>
+                                        <a class="btn-sm btn-dark border-0 shadow-none gradient-bottom-right start-teal-500 end-blue-500 start-pink-500-hover end-cyan-500-hover"
+                                            id="back"><i class='col fa fa-angle-right'></i></a>
+                                        <a class="btn-sm btn-dark border-0 shadow-none gradient-bottom-right start-teal-500 end-blue-500 start-pink-500-hover end-cyan-500-hover"
+                                            id="next"><i class='col fa fa-angle-left'></i></a>
                                         <span id="resCount" class="text-muted text-sm"></span>
                                     </div>
                                 </div>
@@ -557,8 +572,9 @@
                                     </div>
                                     <div class="row mb-2">
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control bg-white" id="numpadResult"
-                                                aria-describedby="back-Space" disabled autocomplete="off">
+                                            <input type="text" class="form-control form-control-sm bg-white"
+                                                id="numpadResult" aria-describedby="back-Space" disabled
+                                                autocomplete="off">
                                             <span class="input-group-text text-danger" id="numpadResultClear"><i
                                                     class="fa fa-times-circle"></i></span>
                                             <span class="input-group-text" id="back-Space"><i
@@ -567,28 +583,33 @@
                                     </div>
                                     <div class="g-6 numpad">
                                         <div class="row g-6 mb-2">
-                                            <button class="form-control col h5 p-4" val="1">1</button>
-                                            <button class="form-control col h5 p-4 me-1 ms-1" val="2">2</button>
-                                            <button class="form-control col h5 p-4" val="3">3</button>
+                                            <button class="form-control form-control-sm col h5 p-4" val="1">1</button>
+                                            <button class="form-control form-control-sm col h5 p-4 me-1 ms-1"
+                                                val="2">2</button>
+                                            <button class="form-control form-control-sm col h5 p-4" val="3">3</button>
                                         </div>
                                         <div class="row g-6 mb-2">
-                                            <button class="form-control col h5 p-4" val="4">4</button>
-                                            <button class="form-control col h5 p-4 me-1 ms-1" val="5">5</button>
-                                            <button class="form-control col h5 p-4" val="6">6</button>
+                                            <button class="form-control form-control-sm col h5 p-4" val="4">4</button>
+                                            <button class="form-control form-control-sm col h5 p-4 me-1 ms-1"
+                                                val="5">5</button>
+                                            <button class="form-control form-control-sm col h5 p-4" val="6">6</button>
                                         </div>
                                         <div class="row g-6 mb-2">
-                                            <button class="form-control col h5 p-4" val="7">7</button>
-                                            <button class="form-control col h5 p-4 me-1 ms-1" val="8">8</button>
-                                            <button class="form-control col h5 p-4" val="9">9</button>
+                                            <button class="form-control form-control-sm col h5 p-4" val="7">7</button>
+                                            <button class="form-control form-control-sm col h5 p-4 me-1 ms-1"
+                                                val="8">8</button>
+                                            <button class="form-control form-control-sm col h5 p-4" val="9">9</button>
                                         </div>
                                         <div class="row g-6 mb-2">
-                                            <button class="form-control col h5 p-3 me-1" val="0">0</button>
-                                            <button class="form-control col h5 p-3 ms-1" val=".">.</button>
+                                            <button class="form-control form-control-sm col h5 p-3 me-1"
+                                                val="0">0</button>
+                                            <button class="form-control form-control-sm col h5 p-3 ms-1"
+                                                val=".">.</button>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="numpadCloseButton btn btn-secondary"
+                                    <button type="button" class="numpadCloseButton btn btn-sm btn-secondary"
                                         data-bs-dismiss="modal">اغلاق</button>
                                     <button type="button" id="backToDebt" class="btn btn-primary" data-bs-toggle="modal"
                                         data-bs-target="#debtPad">حفظ</button>

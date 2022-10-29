@@ -286,6 +286,7 @@ function loadOrder(_orderid, finishedOnly = true) {
                                 $.post("", { "getconsumer": respdata.consumer_id }, (html) => {
                                     consumerData = JSON.parse(html)[0][0];
                                     $("#sellForConsumerSearchBar").val(consumerData.name);
+                                    $("#clientName").html(`العميل : ${consumerData.name}`);
                                 });
 
                                 $("#consumer_id").val(respdata.consumer_id);
@@ -497,7 +498,7 @@ $(document).ready(function () {
                 }
 
                 if (resp.ok != true) {
-                    alertify.error(resp.msg); // Print Error MSG
+                    console.log("quick search: " + resp.msg); // Print Error MSG
                 } else {
                     var itemData = resp[0];
                     $("#quickSearchItems").html('');
@@ -554,6 +555,7 @@ function clear(newOrderId = true) {
     update = false;
     finished = 0;
     $("input").val("");
+    $("#clientName").html(`العميل : عميل افتراضي`);
     $("#discount").val(0);
     $("#dateBar").html(getDate());
     $("#unFinishedOrdersList").html('');

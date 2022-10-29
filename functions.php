@@ -88,8 +88,8 @@ function getUnitesAndClass() {
 function getProductBySearch($barcode) {
     $conn = conn();
     $likeVal = str_replace(" ", "%", "%" . $barcode . "%");
-    $stmt = $conn->prepare("SELECT * FROM product WHERE barcode REGEXP ? or `name` LIKE ? or `number` LIKE ? ORDER BY `name` ASC");
-    $stmt->bind_param("sss", $barcode, $likeVal, $likeVal);
+    $stmt = $conn->prepare("SELECT * FROM product WHERE barcode REGEXP ? or `name` LIKE ? or `number` LIKE ? order by trim(? from name)");
+    $stmt->bind_param("ssss", $barcode, $likeVal, $likeVal, $barcode);
 
     if ($stmt->execute()) {
         $result = $stmt->get_result();

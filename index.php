@@ -666,7 +666,11 @@ if (@$_POST) {
                 } else {
                     $contant_body = $admin_panel["analytics_panel"];
                 }
-                include("assets/theme/admin_panel.php");
+                if(key_exists("GET", $_GET)){
+                    include("assets/theme/admin_panel.php");
+                }else{
+                    include("assets/theme/direct.html");
+                }
             } else {
                 include("assets/theme/search.html");
             }

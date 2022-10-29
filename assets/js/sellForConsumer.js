@@ -1,33 +1,46 @@
-function saveclient(id,name){
+function saveclient(id, name) {
     $("#consumer_id").val(id);
     $(".quickConsumerSearch").hide();
     $(".sellForConsumerSearchBar").val(name);
+    $("#clientName").html(`العميل : ${name}`);
 }
-
-function addnewclient(name){
+def = [];
+function addnewclient(name, showSell4ClientPad = false) {
     $("#NewConsumerNameBar").val(name);
 }
-$(document).ready(function(){
-    
-    $(".sellForConsumerSearchBar").keyup(function () { 
+
+function showsellpad(){
+    if (def['showSell4ClientPad']) {
+        $("#sellForConsumer").modal('toggle');
+        def['showSell4ClientPad'] = false;
+    }
+}
+$(document).ready(function () {
+
+
+
+    $("#sellForConsumerForm").click(function(){
+        def['showSell4ClientPad'] = true;
+    });
+    $(".sellForConsumerSearchBar").keyup(function () {
         var clientName = $(this).val();
-        if(clientName.length > 0){
-            $.post("", {"searchconsumer":clientName}, function(html){
+        if (clientName.length > 0) {
+            $.post("", { "searchconsumer": clientName }, function (html) {
                 try {
                     resp = JSON.parse(html);
                 } catch (error) {
                     alertify.error('حدث خطا من السيرفر');
                     return;
                 }
-                if(resp.ok != true){
+                if (resp.ok != true) {
                     $(".quickConsumerSearch").html('');
-                    $(".quickConsumerSearch").html(`<tr data-bs-toggle="modal" data-bs-target="#NewConsumer" onclick="addnewclient('` + clientName + `')"><td class="noselect">اضافة عميل جديد</td></tr>`);
+                    $(".quickConsumerSearch").html(`<tr data-bs-toggle="modal" data-bs-target="#NewConsumer" onclick="addnewclient('${clientName}')"><td class="noselect">اضافة عميل جديد</td></tr>`);
                     $(".quickConsumerSearch").show();
-                }else{
+                } else {
                     var itemData = resp[0];
                     $(".quickConsumerSearch").html('');
                     try {
-                        itemData.forEach(function(item){
+                        itemData.forEach(function (item) {
                             $(".quickConsumerSearch").append(`<tr onclick="saveclient(${item.id},'${item.name}')" class="cqs${item.id}">`);
                             $(".cqs" + item.id).append('<td>' + item.name + '</td>');
                             $(".quickConsumerSearch").append('</tr>');
@@ -37,7 +50,7 @@ $(document).ready(function(){
                         $(".cqs" + itemData.id).append('<td>' + itemData.name + '</td>');
                         $(".quickConsumerSearch").append('</tr>');
                     }
-                    $(".quickConsumerSearch").append(`<tr data-bs-toggle="modal" data-bs-target="#NewConsumer" onclick="addnewclient('` + clientName + `')"><td class="noselect">اضافة عميل جديد</td></tr>`);
+                    $(".quickConsumerSearch").append(`<tr data-bs-toggle="modal" data-bs-target="#NewConsumer" onclick="addnewclient('${clientName}')"><td class="noselect">اضافة عميل جديد</td></tr>`);
                     $(".quickConsumerSearch").show();
                 }
             });
@@ -45,5 +58,5 @@ $(document).ready(function(){
             $(".quickConsumerSearch").html('');
         }
     });
-    
+
 });

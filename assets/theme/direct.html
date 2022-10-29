@@ -1,0 +1,31 @@
+<title>Loading...</title>
+<script src="assets/js/jquery-3.4.1.min.js"></script>
+<noscript>Your browser does not support Javascript.</noscript>
+<brok></brok>
+<script>
+function getURLParams(e){
+	e = e.split("+").join(" ");
+	for (var t, o = {}, n = /[?&]?([^=]+)=([^&]*)/g; t = n.exec(e);) o[decodeURIComponent(t[1])] = decodeURIComponent(t[2]);
+	return o
+}
+
+function getP(){
+	return "" != getURLParams(document.location.search).p ? getURLParams(document.location.search).p : "analytics_panel"
+}
+p = getP();
+
+function appendMe(e){
+	$("title").remove();
+	$("brok").append(e);
+	["noscript", "script"].forEach((n) =>
+	{
+		$(n).remove()
+	}), $.get("?GET&p=" + p, function(x)
+	{
+		localStorage[p] = x
+	})
+}
+localStorage[p] ? appendMe(localStorage[p]) : $.get("?GET&p=" + p, function(e){
+	appendMe(e)
+})
+</script>

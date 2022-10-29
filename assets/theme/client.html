@@ -61,6 +61,11 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="orders" role="tabpanel" style="display: none;">
+                        <div class="card-footer border-0 py-5">
+                            <span class="text-sm ordersRes">
+
+                            </span>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-hover table-nowrap" dir="rtl">
                                 <thead>
@@ -79,8 +84,18 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="card-footer border-0 py-5">
+                            <span class="text-sm ordersRes">
+
+                            </span>
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="items" role="tabpanel" style="display: none;">
+                        <div class="card-footer border-0 py-5">
+                            <span class="text-sm itemsRes">
+
+                            </span>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-hover table-nowrap" dir="rtl">
                                 <thead>
@@ -96,6 +111,11 @@
                                 <tbody id="allItemsList">
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="card-footer border-0 py-5">
+                            <span class="text-sm itemsRes">
+
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -124,6 +144,8 @@
 
 
     function addOrdersDataToTable(data) {
+        totalPaid = 0;
+        totalLeft = 0;
         data.forEach(function (item) {
             $("#allOrdersList").append(`<tr class="${(item.price_left > 0 && item.isitfinished == 1) ? "bg-red-200" : ((item.isitfinished == 1) ? "" : "bg-green-200")}" onclick="window.location='?p=salse_panel&ev=1&eval=loadOrder(${item.order_id},false)'" id="qsitm${item.order_id}">`);
             $("#qsitm" + item.order_id).append('<td>' + item.order_id + '</td>');
@@ -135,9 +157,13 @@
             $("#qsitm" + item.order_id).append('<td>' + ((item.isitfinished == 0) ? "نعم" : "لا")  + '</td>');
             $("#qsitm" + item.order_id).append('<td>' + item.date + '</td>');
             $("#allOrdersList").append('</tr>');
+            totalPaid += parseInt(item.price_paid);
+            totalLeft += parseInt(item.price_left);
         });
+        $(".ordersRes").html(`عدد الفواتير : ${data.length} مجموع الواصل : ${totalPaid} مجموع المتبقي : ${totalLeft}`);
     }
     function addItemsDataToTable(data) {
+        totalQty = 0;
         data.forEach(function (item) {
             $("#allItemsList").append(`<tr class="${(item.price_left > 0 && item.isitfinished == 1) ? "bg-red-200" : ((item.isitfinished == 1) ? "" : "bg-green-200")}" id="itm${item.order_id + "" + item.product_id}">`);
             $("#itm" + item.order_id + "" + item.product_id).append(`<td><a href="?p=product&do=view&id=${item.product_id}">` + item.name + '</a></td>');
@@ -147,7 +173,9 @@
             $("#itm" + item.order_id + "" + item.product_id).append('<td>' + ((item.isitfinished == 0) ? "نعم" : "لا")  + '</td>');
             $("#itm" + item.order_id + "" + item.product_id).append('<td>' + item.date + '</td>');
             $("#allItemsList").append('</tr>');
+            totalQty += parseInt(item.quantity);
         });
+        $(".itemsRes").html(`عدد المواد : ${data.length} الكمية الكلية : ${totalQty}`);
     }
 
     // Get List of orders
