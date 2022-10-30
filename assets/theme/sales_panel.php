@@ -23,7 +23,8 @@
     <main class="py-6 bg-surface-secondary">
         <div class="container-fluid">
             <div dir="rtl">
-                <script src="assets/js/search.js"></script>
+                <script><?= file_get_contents("assets/js/search.js") ?></script>
+                <!-- <script src="assets/js/search.js"></script> -->
                 <div>
                     <div>
                         <div>
@@ -262,7 +263,8 @@
                     </div>
                 </div>
                 <!-- تسديد ديون -->
-                <script src="assets\js\payDebt.js"></script>
+                <!-- <script src="assets\js\payDebt.js"></script> -->
+                <script><?= file_get_contents("assets\js\payDebt.js") ?></script>
                 <div class="modal fade" id="payDebt" dir="ltr" tabindex="-1" aria-labelledby="payDebtLabel"
                     aria-hidden="true">
                     <div class="modal-dialog modal-sm">
@@ -312,7 +314,8 @@
                     </div>
                 </div>
                 <!-- بيع لعميل  -->
-                <script src="assets/js/sellForConsumer.js"></script>
+                <script><?= file_get_contents("assets/js/sellForConsumer.js") ?></script>
+                <!-- <script src="assets/js/sellForConsumer.js"></script> -->
                 <div class="modal fade" id="sellForConsumer" dir="ltr" tabindex="-1"
                     aria-labelledby="sellForConsumerLabel" aria-hidden="true">
                     <div class="modal-dialog modal-sm">
@@ -367,7 +370,8 @@
                 </div>
 
                 <!-- اضافة عميل جديد -->
-                <script src="assets/js/NewConsumer.js"></script>
+                <!-- <script src="assets/js/NewConsumer.js"></script> -->
+                <script><?= file_get_contents("assets/js/NewConsumer.js") ?></script>
                 <div class="modal fade" id="NewConsumer" dir="ltr" tabindex="-1" aria-labelledby="NewConsumerLabel"
                     aria-hidden="true">
                     <div class="modal-dialog modal-sm">
@@ -419,7 +423,8 @@
 
 
                 <!-- لوحة ذمة  -->
-                <script src="assets/js/debtPad.js"></script>
+                <!-- <script src="assets/js/debtPad.js"></script> -->
+                <script><?= file_get_contents("assets/js/debtPad.js") ?></script>
                 <div class="modal fade" id="debtPad" dir="ltr" tabindex="-1" aria-labelledby="debtPadLabel"
                     aria-hidden="true">
                     <div class="modal-dialog modal-sm">
@@ -458,7 +463,8 @@
                     </div>
                 </div>
                 <!-- فواتير معلقه  -->
-                <script src="assets/js/unFinishedOrders.js"></script>
+                <!-- <script src="assets/js/unFinishedOrders.js"></script> -->
+                <script><?= file_get_contents("assets/js/unFinishedOrders.js") ?></script>
                 <div class="modal fade" id="unFinishedOrders" dir="ltr" tabindex="-1"
                     aria-labelledby="unFinishedOrdersLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
@@ -492,7 +498,8 @@
                     </div>
                 </div>
                 <!-- عرض جميع الفواتير -->
-                <script src="assets/js/allOrders.js"></script>
+                <!-- <script src="assets/js/allOrders.js"></script> -->
+                <script><?= file_get_contents("assets/js/allOrders.js") ?></script>
                 <div class="modal fade" id="allOrders" dir="ltr" tabindex="-1" aria-labelledby="allOrdersLabel"
                     aria-hidden="true">
                     <div class="modal-dialog modal-lg">
@@ -533,7 +540,8 @@
                     </div>
                 </div>
                 <!-- Product Details -->
-                <script src="assets\js\productDetailsAdmin.js"></script>
+                <!-- <script src="assets\js\productDetailsAdmin.js"></script> -->
+                <script><?= file_get_contents("assets/js/productDetailsAdmin.js") ?></script>
                 <div class="modal fade" id="productDetails" dir="ltr" tabindex="-1"
                     aria-labelledby="productDetailsLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
@@ -620,7 +628,8 @@
                         </div>
                     </div>
                 </div>
-                <script src="assets/js/numpad.js"></script>
+                <!-- <script src="assets/js/numpad.js"></script> -->
+                <script><?= file_get_contents("assets/js/numpad.js") ?></script>
             </div>
         </div>
     </main>

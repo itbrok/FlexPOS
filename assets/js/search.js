@@ -12,6 +12,8 @@ var finished = 0;
 var autoPrint = true;
 var GET;
 var UNITES = null;
+var searchLimit = 50;
+var defaultSearchLimit = 50;
 
 function updateDiscount(newval) {
     $("#discount").val(newval);
@@ -392,8 +394,52 @@ function getQueryParams(qs) {
     return params;
 }
 
-$(document).ready(function () {
+function gndSearchItems(q, client_id, l, deleteOld = true){
+    if (client_id.length > 0) {
+        reqData = { "search": q, "_client_id": client_id, "limit": l };
+    } else {
+        reqData = { search: q, "limit": l };
+    }
+    $.post("", reqData, function (html) {
+        try {
+            resp = JSON.parse(html);
+        } catch (error) {
+            return;
+        }
 
+        if (resp.ok != true) {
+            // alertify.error(resp.msg); // Print Error MSG
+        } else {
+            var itemData = resp[0];
+            if(deleteOld){
+                $("#quickSearchItems").html('');
+            }
+            itemData.forEach(function (item) {
+                $("#quickSearchItems").append('<tr onclick="addItem(' + "'" + item.barcode + "'" + ',1,1)" id="qsitm' + item.barcode + '">');
+                $("#qsitm" + item.barcode).append(`<td class="noselect">${item.name} ${item.number}</td>`);
+                $("#quickSearchItems").append('</tr>');
+                $("#quickSearchItems").show();
+            });
+        //     qitms = $("#quickSearchItems").parent().parent()[0];
+        //     qitms.querySelector(`#qsitm${resp[0][0].barcode}`).scrollIntoView({
+        //         behavior: 'smooth'
+        //    });
+        }
+    });
+}
+
+$(document).ready(function () {
+    $("#quickSearchItems").parent().parent().on('scroll', function (event) {
+        var element = event.target;
+        if (element.scrollHeight - element.scrollTop === element.clientHeight) {
+            client_id = $("#consumer_id").val();
+            q = $("#quick_search").val();
+            if(q.length > 0){
+                gndSearchItems(q, client_id, searchLimit, false);
+                searchLimit += defaultSearchLimit;
+            }
+        }
+    });
 
     setUnites();
 
@@ -480,39 +526,17 @@ $(document).ready(function () {
     $("#quick_search").click(function (e) {
         $("#quickSearchItems").show();
     });
-    var fdata = $("#quickSearchItems").html();
-    $("#quick_search").on("keyup", function () {
+    // var fdata = $("#quickSearchItems").html();
+    $("#quick_search").on("input", function () {
         var value = $(this).val().toLowerCase();
         if (value.length > 0) {
             client_id = $("#consumer_id").val();
-            if (client_id.length > 0) {
-                reqData = { "search": value, "_client_id": client_id };
-            } else {
-                reqData = { search: value };
-            }
-            $.post("", reqData, function (html) {
-                try {
-                    resp = JSON.parse(html);
-                } catch (error) {
-                    return;
-                }
-
-                if (resp.ok != true) {
-                    console.log("quick search: " + resp.msg); // Print Error MSG
-                } else {
-                    var itemData = resp[0];
-                    $("#quickSearchItems").html('');
-                    itemData.forEach(function (item) {
-                        $("#quickSearchItems").append('<tr onclick="addItem(' + "'" + item.barcode + "'" + ',1,1)" id="qsitm' + item.barcode + '">');
-                        $("#qsitm" + item.barcode).append(`<td class="noselect">${item.name} ${item.number}</td>`);
-                        $("#quickSearchItems").append('</tr>');
-                        $("#quickSearchItems").show();
-                    });
-                }
-            });
-        } else {
-            $("#quickSearchItems").html(fdata);
+            gndSearchItems(value, client_id, 0); // Add Search items
+            searchLimit = defaultSearchLimit;
         }
+        // else {
+        //     $("#quickSearchItems").html(fdata);
+        // }
     });
 });
 

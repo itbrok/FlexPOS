@@ -85,11 +85,11 @@ function getUnitesAndClass() {
     return $resp;
 }
 
-function getProductBySearch($barcode) {
+function getProductBySearch($barcode, $limit) {
     $conn = conn();
     $likeVal = str_replace(" ", "%", "%" . $barcode . "%");
-    $stmt = $conn->prepare("SELECT * FROM product WHERE barcode REGEXP ? or `name` LIKE ? or `number` LIKE ? order by trim(? from name)");
-    $stmt->bind_param("ssss", $barcode, $likeVal, $likeVal, $barcode);
+    $stmt = $conn->prepare("SELECT * FROM product WHERE barcode REGEXP ? or `name` LIKE ? or `number` LIKE ? order by trim(? from name) LIMIT ?, 50");
+    $stmt->bind_param("ssssi", $barcode, $likeVal, $likeVal, $barcode, $limit);
 
     if ($stmt->execute()) {
         $result = $stmt->get_result();

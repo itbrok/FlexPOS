@@ -52,9 +52,9 @@ if (@$_POST) {
         } else {
             echo json_encode(["ok" => false, "msg" => "حدث خطا اثناء تحميل صورة المنتج"]);
         }
-    } elseif (key_exists("search", $_POST)) {  //Search
+    } elseif (keys_exists(["search","limit"], $_POST)) {  //Search
         errorMsg();
-        $data = getProductBySearch($_POST["search"]);
+        $data = getProductBySearch($_POST["search"], $_POST["limit"]);
         if ($data != false) {
             echo json_encode(["ok" => true, $data]);
         } else {
@@ -649,7 +649,7 @@ if (@$_POST) {
                     "settings_panel"    => "assets/theme/settings_panel.php",
                     "clients_panel"     => "assets/theme/clients_panel.html",
                     "orders_panel"       => "assets/theme/orders_panel.html",
-                    "salse_panel"       => "assets/theme/sales_panel.html",
+                    "salse_panel"       => "assets/theme/sales_panel.php",
                     "users_panel"       => "assets/theme/users_panel.html",
                     "class_panel"       => "assets/theme/class_panel.html",
                     "unit_panel"        => "assets/theme/unit_panel.html",
