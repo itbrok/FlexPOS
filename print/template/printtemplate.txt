@@ -1,134 +1,156 @@
 <!DOCTYPE html>
 <html dir="rtl" itemscope="" itemtype="http://schema.org/WebPage" lang="ar-IQ">
-    <head>
-        <meta charset="UTF-8">
-        <style>
-            #invoice-POS{
-                /* padding:2mm; */
-                margin: 0 auto;
-                width: 72mm; 
-                background: #FFF;
-            }
-            h2{
-                font-size: 1em;
-                margin: 0mm;
-            }
 
-            p{
-                font-size: .9em;
-                color: rgb(0, 0, 0);
-                line-height: 5mm;
-                margin: 0.5mm;
-            }
-            
-            #top, #mid,#bot{ /* Targets all id with 'col-' */
-                border-bottom: 1px solid #EEE;
-            }
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @font-face {
+            font-family: SF-Arabic;
+            font-style: light;
+            font-weight: 300;
+            font-display: block;
+            src: url(../template/SF-Arabic.ttf) format("truetype")
+        }
+    </style>
+    <style>
+        
+        body{
+            font-family: SF-Arabic;
+        }
+        #invoice-POS {
+            /* padding:2mm; */
+            margin: 0 auto;
+            width: 77mm;
+            background: #FFF;
+        }
 
-            #top{min-height: 90px;}
-            #mid{min-height: 80px;} 
-            #bot{ min-height: 50px;}
+        h2 {
+            font-size: 1em;
+            margin: 0mm;
+        }
 
-            #top .logo{
-                height: 50px;
-                width: 50px;
-                background: url(http://michaeltruong.ca/images/logo1.png) no-repeat;
-                background-size: 50px 50px;
-            }
-            .info{
-                display: block;
-                margin-left: 0;
-            }
+        p {
+            font-size: .9em;
+            color: rgb(0, 0, 0);
+            line-height: 5mm;
+            margin: 0.5mm;
+        }
 
-            table{
-                width: 100%;
-                border-collapse: collapse;
-            }
+        .qty{
+            width: 8mm;
+        }
 
-            .tabletitle{
-                font-size: 4mm;
-                background: #EEE;
-            }
-            .service{border-bottom: .05mm solid #000000;}
-            /* .item{width: 24mm;} */
-            .itemtext{font-size: 5mm;}
+        #top,
+        #mid,
+        #bot {
+            /* Targets all id with 'col-' */
+            border-bottom: 1px solid rgb(0, 0, 0);
+        }
 
-            #legalcopy{
-                margin-top: 2mm;
-            }
+        #top {
+            min-height: 90px;
+        }
 
-        </style>
-    </head>
-    <body>
+        #mid {
+            min-height: 5mm;
+        }
+
+        #bot {
+            min-height: 50px;
+        }
+
+        #top .logo {
+            height: 30mm;
+            width: 77mm;
+            background: url(@logo_small) no-repeat;
+            background-size: 77mm 30mm;
+        }
+
+        .info {
+            display: block;
+            margin-left: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .tabletitle {
+            background: #EEE;
+        }
+
+        .service {
+            border-bottom: .05mm solid #000000;
+        }
+
+        #legalcopy {
+            margin-top: 2mm;
+        }
+    </style>
+</head>
+
+<body>
     <div id="invoice-POS">
-    
-    <center id="top">
-      <div class="logo"></div>
-      <div class="info"> 
-        <h2>@company_name</h2>
-      </div><!--End Info-->
-    </center><!--End InvoiceTop-->
-    
-    <div id="mid">
-      <div class="info">
-        <h2>معلومات التواصل</h2>
-        <p> 
-            العنوان : @address</br>
-            ايميل : @email</br>
-            موبايل : @phone</br>
-        </p>
-      </div>
-    </div><!--End Invoice Mid-->
-    
-    <div id="bot">
 
-					<div id="table">
-						<table>
-							<tr class="tabletitle">
-								<td class="item"><h2>المادة</h2></td>
-								<td class="Hours"><h2>عدد</h2></td>
-								<td class="Rate"><h2>السعر</h2></td>
-							</tr>
-                            @foreach start
-							<tr class="service">
-								<td class="tableitem"><p class="itemtext">@item_name</p></td>
-								<td class="tableitem"><p class="itemtext">@item_qty</p></td>
-								<td class="tableitem"><p class="itemtext">@item_price</p></td>
-							</tr>
-                            @foreach end
+        <center id="top">
+            <div class="logo"></div>
+        </center>
+        <!--End InvoiceTop-->
 
-							<tr class="tabletitle">
-								<td></td>
-								<td class="Rate"><h2>الخصم</h2></td>
-								<td class="payment"><h2>@discount</h2></td>
-							</tr>
+        <div id="mid">
+            <h2>العميل : @client_name</h2>
+        </div>
+        <!--End Invoice Mid-->
 
-							<tr class="tabletitle">
-								<td></td>
-								<td class="Rate"><h2>المجموع</h2></td>
-								<td class="payment"><h2>@total_price</h2></td>
-							</tr>
+        <div id="bot">
 
-						</table>
-					</div><!--End Table-->
+            <div id="table">
+                <table>
+                    <tr class="tabletitle">
+                        <td class="item">
+                            <h2>المادة</h2>
+                        </td>
+                        <td class="qty">
+                            <h2>عدد</h2>
+                        </td>
+                        <td class="Rate">
+                            <h2>السعر</h2>
+                        </td>
+                    </tr>
+                    @foreach start
+                    <tr class="service">
+                        <td class="tableitem">
+                            <p class="itemtext">@item_name @item_number</p>
+                        </td>
+                        <td class="tableitem">
+                            <p class="itemtext">@item_qty</p>
+                        </td>
+                        <td class="tableitem">
+                            <p class="itemtext">@item_price</p>
+                        </td>
+                    </tr>
+                    @foreach end
+                </table>
+                <h2 class="tabletitle">الخصم : @discount</h2>
+                <h2 class="tabletitle">المجموع : @total_price</h2>
+            </div>
+            <!--End Table-->
 
-					<div id="legalcopy">
-						<p class="legal">
-                            <strong>
-                                شكرا لتسوقكم منا
-                            </strong>
-                            <br>
-                            نشوفكم بعدين
-						</p>
-                        <svg class="barcode"
-                            jsbarcode-format="upc"
-                            jsbarcode-value="123456789012"
-                            jsbarcode-textmargin="0"
-                            jsbarcode-fontoptions="bold">
-                        </svg>
-					</div>
+            <div id="legalcopy">
+                <p class="legal">
+                    <strong>
+                        شكرا لتسوقكم منا
+                    </strong>
+                    <br>
+                    نشوفكم بعدين
+                </p>
+            </div>
 
-				</div><!--End InvoiceBot-->
-            </div><!--End Invoice-->
-    </body>
+        </div>
+        <!--End InvoiceBot-->
+    </div>
+    <!--End Invoice-->
+</body>
+
 </html>

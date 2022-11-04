@@ -80,6 +80,36 @@
                                             </td>
                                         </tr>
                                         <tr class="mb-3">
+                                            <td><span>Logo Small</span></td>
+                                            <td>
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="row">
+                                                            <img src="<?= getSittings("logo_small") ?? getSittings("def_logo") ?>" class="img-fluid rounded d-block" id="logo_small">
+                                                        </div>
+                                                        <div class="row">
+                                                            <input class="form-control form-control-sm logoUpdate" targetImg="logo_small" size="small" type="file" accept="image/*">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="mb-3">
+                                            <td><span>Logo Large</span></td>
+                                            <td>
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="row">
+                                                            <img src="<?= getSittings("logo_large") ?? getSittings("def_logo") ?>" class="img-fluid rounded d-block" id="logo_large">
+                                                        </div>
+                                                        <div class="row">
+                                                            <input class="form-control form-control-sm logoUpdate" targetImg="logo_large" size="large" type="file" accept="image/*">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="mb-3">
                                             <td><span>التحديثات</span></td>
                                             <td>
                                                 <div class="row">
@@ -363,6 +393,45 @@
                 alertify.error('حدث خطا من السيرفر');
             } else {
                 updateProductImg(resp[0], false);
+            }
+        });
+
+        $(".logoUpdate").on("input", function(evt){
+            var tgt = evt.target || window.event.srcElement,
+            files = tgt.files;
+            mySize = $(this).attr("size");
+            target = $(this).attr("targetImg");
+            // FileReader support
+            if (FileReader && files && files.length) {
+                var fr = new FileReader();
+                fr.onload = function () {
+                    
+                    console.log(target);
+                    document.getElementById(target).src = fr.result;
+                    
+                    $.post("", {
+                        update_logo: {size: mySize, data: fr.result}
+                    }, function(html) {
+                        try {
+                            resp = JSON.parse(html);
+                        } catch (error) {
+                            alertify.error('حدث خطا من السيرفر');
+                            return;
+                        }
+                        if (resp.ok == false) {
+                            alertify.error(resp.msg);
+                        } else {
+                            alertify.success("تم تحديث الـ Logo");
+                        }
+                    });
+                }
+                fr.readAsDataURL(files[0]);
+            }
+            
+            // Not supported
+            else {
+                // fallback -- perhaps submit the input to an iframe and temporarily store
+                // them on the server until the user's session ends.
             }
         });
     });

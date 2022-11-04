@@ -625,6 +625,18 @@ if (@$_POST) {
         } else {
             echo json_encode(["ok" => false, "msg" => "غير مصرح"]);
         }
+    } elseif (key_exists("update_logo", $_POST)) {  // update logos
+        errorMsg();
+        if (checkRole($_SESSION["user_id"], "admin_panel")) {
+            $data = updateSetting("logo_".$_POST["update_logo"]["size"], $_POST['update_logo']["data"]);
+            if ($data != false) {
+                echo json_encode(["ok" => true, $data]);
+            } else {
+                echo json_encode(["ok" => false, "msg" => "لاتوجد بيانات"]);
+            }
+        } else {
+            echo json_encode(["ok" => false, "msg" => "غير مصرح"]);
+        }
     } elseif (key_exists("getUnitesAndClass", $_POST)) {  // get Unites And Classes As Json
         errorMsg();
         $data = getUnitesAndClass();
@@ -679,7 +691,7 @@ if (@$_POST) {
         if (key_exists("getitemname", $_GET)) {
             $data = getProductByBarcode($_GET["getitemname"]);
             if ($data != false) {
-                echo json_encode(["ok" => true, $data["name"]]);
+                echo json_encode(["ok" => true, ["name" => $data["name"], "number" => $data["number"]]]);
             } else {
                 echo $data;
             }

@@ -1288,16 +1288,33 @@ function emptyTable($tableName) {
     return false;
 }
 
+// Find nearset number for IQD
+function iqdRound($n) {
+    $iqdLine = [0, 250, 500, 750, 1000];
 
+    if (strlen($n) >= 3) {
+        $newVal = substr($n,-3);
+        if ($newVal > $iqdLine[3]) {
+            return ($n - $newVal) + $iqdLine[4];
+        } else if ($newVal > $iqdLine[2]) {
+            return ($n - $newVal) + $iqdLine[3];
+        } else if ($newVal > $iqdLine[1]) {
+            return ($n - $newVal) + $iqdLine[2];
+        } else if ($newVal > $iqdLine[0]) {
+            return ($n - $newVal) + $iqdLine[1];
+        }
+    }
+    return $n;
+}
 
 class PrintOrder {
     private array $order;
     private $size77path = "print/template/printtemplate.txt";
-    function __construct($data) {
+    function __construct($data){
         $this->order = $data;
     }
 
-    function get77HTML($data) {
+    function get77HTML($data){
         $re = '/@foreach start(.*)@foreach end/m';
 
         $str = str_replace("\n", "", file_get_contents($this->size77path));
@@ -1310,14 +1327,15 @@ class PrintOrder {
 
         // prepare table items
         $tableItems = "";
-        foreach ($data["items"] as $key => $item) {
-            $tableItems .= str_replace(["@item_name", "@item_qty", "@item_price"], [json_decode(file_get_contents(BASE_URL . "index.php?getitemname=$item[0]"), true)[0], $item[1], $item[2]], $tableTempleate);
+        foreach ($data["items"] as $key => $item){
+            $moredata = getProductByBarcode($item[0]);
+            $tableItems .= str_replace(["@item_name", "@item_number", "@item_qty", "@item_price"], [$moredata["name"], $moredata["number"], $item[1], iqdRound($item[2] * getIQD()["val"])], $tableTempleate);
         }
 
         // add table items to html scrpit
         $str = str_replace($matches[0][0], $tableItems, $str);
 
-        $str = str_replace(["@discount", "@total_price", "@company_name"], [" : $$data[discount]", " : $$data[total_price]", "brok"], $str);
+        $str = str_replace(["@discount", "@total_price", "@logo_small", "@client_name"], [iqdRound($data["discount"]), iqdRound(($data["total_price"] - $data["discount"]) * getIQD()["val"]), getSittings("logo_small"), (getConsumer($data["consumer_id"], false, true)[0]['name']) ?? "عميل افتراضي"], $str);
         return $str;
     }
 
