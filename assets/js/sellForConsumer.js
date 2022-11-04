@@ -22,7 +22,7 @@ $(document).ready(function () {
     $("#sellForConsumerForm").click(function(){
         def['showSell4ClientPad'] = true;
     });
-    $(".sellForConsumerSearchBar").keyup(function () {
+    $(".sellForConsumerSearchBar").on("input", function () {
         var clientName = $(this).val();
         if (clientName.length > 0) {
             $.post("", { "searchconsumer": clientName }, function (html) {
