@@ -376,8 +376,6 @@ ALTER TABLE `printers`
 ALTER TABLE `product`
   MODIFY `id` int(30) NOT NULL AUTO_INCREMENT;
 
-
-ALTER TABLE `product` ADD UNIQUE(`number`);
 --
 -- AUTO_INCREMENT for table `role`
 --
