@@ -90,14 +90,15 @@
     page = 1;
     // Get List of products
     function getproducts() {
-        $.post("", { getproductsList: limit }, function (html) {
+        data = ($("#quick_search").val().length >= 3) ? { search : $("#quick_search").val(), limit: limit } : { getproductsList: limit }
+        $.post("", data, function (html) {
             try {
                 resp = JSON.parse(html);
             } catch (error) {
                 return;
             }
             if (resp.ok != true) {
-                alertify.error(resp.msg);
+                alertify.error("لاتوجد نتائج");
             } else {
                 lastStoredData = resp[0];
                 addDataToTable(resp[0]);
@@ -128,24 +129,24 @@
 
         $("#quick_search").on("keyup", function () {
             var value = $(this).val().toLowerCase();
-            if (value.length > 3) {
-                $.post("", { search : value }, function (html) {
+            if (value.length >= 3) {
+                $.post("", { search : value, limit: limit }, function (html) {
                     try {
                         resp = JSON.parse(html);
                     } catch (error) {
-                        alertify.error(error);
+                        alertify.error("لاتوجد نتائج");
                     }
 
                     if (resp.ok != true) {
-                        alertify.error(resp.msg); // Print Error MSG
+                        alertify.error("لاتوجد نتائج");
                     } else {
                         addDataToTable(resp[0]);
-                        $("#resCount").hide();
+                        $("#resCount").html(`${page} : عرض ${resp[0].length} من ${resp[0][0].resCount} نتيجة`);
                     }
                 });
             } else {
                 addDataToTable(lastStoredData);
-                $("#resCount").html(`عرض ${lastStoredData.length} من ${lastStoredData[0].resCount} نتيجة`);
+                $("#resCount").html(`${page} : عرض ${lastStoredData.length} من ${lastStoredData[0].resCount} نتيجة`);
                 max = lastStoredData[0].resCount;
                 $("#resCount").show();
             }

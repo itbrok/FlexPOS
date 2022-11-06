@@ -637,6 +637,30 @@ if (@$_POST) {
         } else {
             echo json_encode(["ok" => false, "msg" => "غير مصرح"]);
         }
+    } elseif (key_exists("updateprintersize", $_POST)) {  // update printer size
+        errorMsg();
+        if (checkRole($_SESSION["user_id"], "admin_panel")) {
+            $data = updatePrinterSize($_POST['updateprintersize'],$_POST['size']);
+            if ($data != false) {
+                echo json_encode(["ok" => true, $data]);
+            } else {
+                echo json_encode(["ok" => false, "msg" => "لاتوجد بيانات"]);
+            }
+        } else {
+            echo json_encode(["ok" => false, "msg" => "غير مصرح"]);
+        }
+    } elseif (key_exists("update_papers", $_POST)) {  // update papers prefrences
+        errorMsg();
+        if (checkRole($_SESSION["user_id"], "admin_panel")) {
+            $data = updateSetting("papers",json_encode($_POST['update_papers']));
+            if ($data != false) {
+                echo json_encode(["ok" => true, $data]);
+            } else {
+                echo json_encode(["ok" => false, "msg" => "حدث خطا"]);
+            }
+        } else {
+            echo json_encode(["ok" => false, "msg" => "غير مصرح"]);
+        }
     } elseif (key_exists("getUnitesAndClass", $_POST)) {  // get Unites And Classes As Json
         errorMsg();
         $data = getUnitesAndClass();

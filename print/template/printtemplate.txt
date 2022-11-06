@@ -1,110 +1,96 @@
 <!DOCTYPE html>
-<html dir="rtl" itemscope="" itemtype="http://schema.org/WebPage" lang="ar-IQ">
+<html dir="rtl" itemscope itemtype="http://schema.org/WebPage" lang="ar-IQ">
 
 <head>
     <meta charset="UTF-8">
     <style>
-        @font-face {
-            font-family: SF-Arabic;
-            font-style: light;
-            font-weight: 300;
-            font-display: block;
-            src: url(../template/SF-Arabic.ttf) format("truetype")
+        body {
+            font-family: SF-Arabic
         }
-    </style>
-    <style>
-        
-        body{
-            font-family: SF-Arabic;
-        }
+
         #invoice-POS {
-            /* padding:2mm; */
             margin: 0 auto;
-            width: 77mm;
-            background: #FFF;
+            width: @paper_size;
+            background: #fff
         }
 
         h2 {
             font-size: 1em;
-            margin: 0mm;
+            margin: 0
         }
 
         p {
             font-size: .9em;
-            color: rgb(0, 0, 0);
+            color: #000;
             line-height: 5mm;
-            margin: 0.5mm;
+            margin: .5mm
         }
 
-        .qty{
-            width: 8mm;
+        .qty {
+            width: 8mm
         }
 
-        #top,
+        #bot,
         #mid,
-        #bot {
-            /* Targets all id with 'col-' */
-            border-bottom: 1px solid rgb(0, 0, 0);
+        #top {
+            border-bottom: 1px solid #000
         }
 
         #top {
-            min-height: 90px;
+            min-height: 90px
         }
 
         #mid {
-            min-height: 5mm;
+            min-height: 5mm
         }
 
         #bot {
-            min-height: 50px;
+            min-height: 50px
         }
 
         #top .logo {
-            height: 30mm;
-            width: 77mm;
-            background: url(@logo_small) no-repeat;
-            background-size: 77mm 30mm;
+            height: @logo_height;
+            width: @logo_width;
+            background: url(@logo_url) no-repeat;
+            background-size: @logo_width @logo_height;
+            background-position: center;
         }
 
         .info {
             display: block;
-            margin-left: 0;
+            margin-left: 0
         }
 
         table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: collapse
         }
 
         .tabletitle {
-            background: #EEE;
+            background: #eee
         }
 
         .service {
-            border-bottom: .05mm solid #000000;
+            border-bottom: .05mm solid #000
         }
 
         #legalcopy {
-            margin-top: 2mm;
+            margin-top: 2mm
         }
     </style>
 </head>
 
 <body>
     <div id="invoice-POS">
-
         <center id="top">
             <div class="logo"></div>
         </center>
-        <!--End InvoiceTop-->
-
         <div id="mid">
-            <h2>العميل : @client_name</h2>
+            <h2 style="display: inline-block;">التاريخ : @date</h2>
+            <h2 style="display: inline-block;">العميل : @client_name</h2>
+            <h2 style="display: inline-block;">الكاشير : @user_name</h2>
         </div>
-        <!--End Invoice Mid-->
-
         <div id="bot">
-
             <div id="table">
                 <table>
                     <tr class="tabletitle">
@@ -132,25 +118,19 @@
                     </tr>
                     @foreach end
                 </table>
+                <h2 class="tabletitle">المجموع : @sub_total</h2>
                 <h2 class="tabletitle">الخصم : @discount</h2>
-                <h2 class="tabletitle">المجموع : @total_price</h2>
+                <h2 class="tabletitle">المجموع النهائي : @total_price</h2>
             </div>
-            <!--End Table-->
-
             <div id="legalcopy">
-                <p class="legal">
-                    <strong>
-                        شكرا لتسوقكم منا
-                    </strong>
-                    <br>
-                    نشوفكم بعدين
-                </p>
+                <p class="legal"><strong>شكرا لتسوقكم منا</strong><br>نشوفكم بعدين</p>
             </div>
-
         </div>
-        <!--End InvoiceBot-->
     </div>
-    <!--End Invoice-->
+    <center>
+        ورقة رقم @currentPage من @allPages
+        <p>تطبيق Flex</p>
+    </center>
 </body>
 
 </html>

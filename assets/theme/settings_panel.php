@@ -1,3 +1,19 @@
+
+<script>
+    <?php
+        $sizes = array_keys(json_decode(getSittings("papers"),true));
+        foreach($sizes as $i => $s){
+            $arr[$i] = "<div class=\"form-check\"><input onClick=\"selectSize('$s')\" class=\"form-check-input\" type='radio' id='$i$s' name='size'><label class='form-check-label' for='$i$s'>$s</label></div>";
+        }
+
+        $papers = getSittings("papers");
+    ?>
+    var sizes = `<form><?php echo implode('',$arr); ?></form>`
+    papers = <?= $papers ?>;
+</script>
+<script src="assets\richtexteditor\jquery.richtext.min.js"></script>
+<link rel="stylesheet" href="assets\richtexteditor\richtext.min.css">
+
 <div class="h-screen flex-grow-1">
     <!-- Header -->
     <header class="bg-surface-primary border-bottom pt-6">
@@ -28,6 +44,9 @@
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#printers" type="button" role="tab" aria-selected="false">الطابعات</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#papers" type="button" role="tab" aria-selected="false">الاوراق</button>
                         </li>
                     </ul>
                 </div>
@@ -141,6 +160,7 @@
                                             <tr>
                                                 <th>#</th>
                                                 <th>اسم الطابعة</th>
+                                                <th>الحجم</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
@@ -155,13 +175,67 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <div class="tab-pane fade" id="papers" role="tabpanel">
+                            <div class="row justify-content-center">
+                                <div class="col-sm-6 col-md-6">
+                                    <table class="col-sm-6 col-md-6">
+                                        <thead>
+                                            <tr>
+                                                <th width="50%">
+                                                </th>
+                                                <th>
+
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="mb-3">
+                                                <td><h2>حجم 77</h2></td>
+                                            </tr>
+                                            <tr class="mb-3">
+                                                <td><span>عدد المواد الاقصى لكل ورقة</span></td>
+                                                <td><input class="form-control form-control-sm mb-3" id="77_max_items_count" type="number" value="30"></td>
+                                            </tr>
+                                            <tr class="mb-3">
+                                                <td><span>الاسعار</span></td>
+                                                <td>
+                                                    <div class="form-check"><input onclick="changePaper('77','iqd',true)" class="form-check-input" name="77iqd" type="radio" id="77iqdtrue"><label class='form-check-label' for='77iqdtrue'>عراقي</label></div>
+                                                    <div class="form-check"><input onclick="changePaper('77','iqd',false)" class="form-check-input" name="77iqd" type="radio" id="77iqdfalse"><label class='form-check-label' for='77iqdfalse'>دولار</label></div>
+                                                </td>
+                                            </tr>
+                                            <tr class="mb-3">
+                                                <td><h2>حجم A4</h2></td>
+                                            </tr>
+                                            <tr class="mb-3">
+                                                <td><span>عدد المواد الاقصى لكل ورقة</span></td>
+                                                <td><input class="form-control form-control-sm mb-3" id="A4_max_items_count" type="number" value="32"></td>
+                                            </tr>
+                                            <tr class="mb-3">
+                                                <td><span>الاسعار</span></td>
+                                                <td>
+                                                    <div class="form-check"><input onclick="changePaper('A4','iqd',true)" class="form-check-input" name="A4iqd" type="radio" id="A4iqdtrue"><label class='form-check-label' for='A4iqdtrue'>عراقي</label></div>
+                                                    <div class="form-check"><input onclick="changePaper('A4','iqd',false)" class="form-check-input" name="A4iqd" type="radio" id="A4iqdfalse"><label class='form-check-label' for='A4iqdfalse'>دولار</label></div>
+                                                </td>
+                                            </tr>
+                                            <tr class="mb-3">
+                                                <td><span>الفوتر</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <textarea id="footer_text"></textarea>
+                                    <div class="card-footer border-0 py-5">
+                                    <button onclick="savePapers()" class="btn col btn-sm btn-outline-primary">حفظ <i class="fa-solid fa-rotate"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div><!-- Tabs end -->
                 </div>
             </div>
         </div>
     </main>
 </div>
-
 
 <div class="modal fade" id="updateiFrame" dir="ltr" tabindex="-1" aria-labelledby="updateiFrameLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm">
@@ -180,6 +254,36 @@
 
 
 <script>
+
+    function changePaper(size, sub, val){
+        papers[size][sub] = val;
+    }
+
+    function savePapers(){
+
+        changePaper("A4",'@footer_text',$('#footer_text').val());
+        changePaper("77",'@footer_text',$('#footer_text').val());
+        
+        changePaper("A4",'@max_items_count',$('#A4_max_items_count').val());
+        changePaper("77",'@max_items_count',$('#77_max_items_count').val());
+        
+        $.post("", {
+            update_papers: papers
+        }, function(html) {
+            try {
+                resp = JSON.parse(html);
+            } catch (error) {
+                alertify.error('حدث خطا من السيرفر');
+                return;
+            }
+            if (resp.ok == false) {
+                alertify.error(resp.msg);
+            } else {
+                alertify.success("تم حفظ اعدادات الاوراق");
+            }
+        });
+    }
+
     limit = 1;
     max = 0;
     // Get List of printers
@@ -203,7 +307,8 @@
                         $("#printerslist").append(`<tr id="printer${item.id}">`);
                         $("#printer" + item.id).append(`<td>${item.id}</td>`);
                         $("#printer" + item.id).append(`<td>${item.PrinterName}</td>`);
-                        $("#printer" + item.id).append(`<td class="text-end"><button class="btn btn-sm btn-square btn-neutral ms-1 text-danger" onclick="deleteit('printer',${item.id},'#printer${item.id}')"> <i class="fa fa-trash"></i></button></td>`);
+                        $("#printer" + item.id).append(`<td>${item.size}</td>`);
+                        $("#printer" + item.id).append(`<td class="text-end"><button class="btn btn-sm btn-square btn-neutral ms-1 text-danger" onclick="deleteit('printer',${item.id},'#printer${item.id}')"> <i class="fa fa-trash"></i></button><a href="javascript:changeSize(${item.id},'${item.PrinterName}')" class="btn btn-sm btn-square btn-neutral text-danger-hover"><i class="fa fa-pen"></i></a></td>`);
                         $("#printerslist").append('</tr>');
                     });
                     $("#resCount").html(`عرض ${itemData.length} نتيجة`);
@@ -254,8 +359,211 @@
         }
         img.src = url;
     }
+    selectedSize="A4";
+    function selectSize(a){
+        selectedSize=a;
+    }
+
+    function changeSize(a,b){
+        alertify.confirm(b,"",
+                function () {
+                    $.post("", { updateprintersize: a, size: selectedSize},
+                        function (data, textStatus, jqXHR) {
+                            try {
+                                resp = JSON.parse(data);
+                            } catch (error) {
+                                alertify.error('حدث خطا من السيرفر');
+                                return;
+                            }
+                            if (resp.ok != true) {
+                                alertify.error(resp.msg);
+                            } else {
+                                limit=1;
+                                max=0;
+                                getprinters();
+                                alertify.success("تم تحديث القائمة");
+                            }
+                        }
+                    );
+                },
+                function () {
+                    alertify.error('تم الالغاء')
+                }
+       ).setContent(sizes).showModal();
+    }
 
     $(document).ready(function() {
+        //Set papers
+        $("#77_max_items_count").val(papers["77"]["@max_items_count"]);
+        $("#A4_max_items_count").val(papers["A4"]["@max_items_count"]);
+        if(papers["77"]["iqd"] == true){
+            $("#77iqdtrue").attr("checked",true);
+        }else{
+            $("#77iqdfalse").attr("checked",true);
+        }
+        
+        if(papers["A4"]["iqd"] == true){
+            $("#A4iqdtrue").attr("checked",true);
+        }else{
+            $("#A4iqdfalse").attr("checked",true);
+        }
+
+        $('#footer_text').val(papers["A4"]["@footer_text"]);
+
+        //Set richText Editor
+        $('#footer_text').richText({
+
+        // text formatting
+        bold: true,
+        italic: true,
+        underline: true,
+
+        // text alignment
+        leftAlign: true,
+        centerAlign: true,
+        rightAlign: true,
+        justify: true,
+
+        // lists
+        ol: true,
+        ul: true,
+
+        // title
+        heading: true,
+
+        // fonts
+        fonts: true,
+        fontList: ["Arial",
+        "Arial Black",
+        "Comic Sans MS",
+        "Courier New",
+        "Geneva",
+        "Georgia",
+        "Helvetica",
+        "Impact",
+        "Lucida Console",
+        "Tahoma",
+        "Times New Roman",
+        "Verdana"
+        ],
+        fontColor: true,
+        fontSize: true,
+
+        // uploads
+        imageUpload: true,
+        fileUpload: false,
+
+        // media
+        Embed: false,
+
+        // link
+        urls: false,
+
+        // tables
+        table: true,
+
+        // code
+        removeStyles: true,
+        code: true,
+
+        // colors
+        colors: [],
+
+        // dropdowns
+        fileHTML: '',
+        imageHTML: '',
+
+        // translations
+        translations: {
+        'title': 'عنوان',
+        'white': 'White',
+        'black': 'Black',
+        'brown': 'Brown',
+        'beige': 'Beige',
+        'darkBlue': 'Dark Blue',
+        'blue': 'Blue',
+        'lightBlue': 'Light Blue',
+        'darkRed': 'Dark Red',
+        'red': 'Red',
+        'darkGreen': 'Dark Green',
+        'green': 'Green',
+        'purple': 'Purple',
+        'darkTurquois': 'Dark Turquois',
+        'turquois': 'Turquois',
+        'darkOrange': 'Dark Orange',
+        'orange': 'Orange',
+        'yellow': 'Yellow',
+        'imageURL': 'Image URL',
+        'fileURL': 'File URL',
+        'linkText': 'Link text',
+        'url': 'URL',
+        'size': 'Size',
+        'responsive': '<a href="https://www.jqueryscript.net/tags.php?/Responsive/">Responsive</a>',
+        'text': 'Text',
+        'openIn': 'Open in',
+        'sameTab': 'Same tab',
+        'newTab': 'New tab',
+        'align': 'Align',
+        'left': 'Left',
+        'justify': 'Justify',
+        'center': 'Center',
+        'right': 'Right',
+        'rows': 'صفوف',
+        'columns': 'عواميد',
+        'add': 'Add',
+        'pleaseEnterURL': 'Please enter an URL',
+        'videoURLnotSupported': 'Video URL not supported',
+        'pleaseSelectImage': 'Please select an image',
+        'pleaseSelectFile': 'Please select a file',
+        'bold': 'Bold',
+        'italic': 'Italic',
+        'underline': 'Underline',
+        'alignLeft': 'Align left',
+        'alignCenter': 'Align centered',
+        'alignRight': 'Align right',
+        'addOrderedList': 'Add ordered list',
+        'addUnorderedList': 'Add unordered list',
+        'addHeading': 'Add Heading/title',
+        'addFont': 'Add font',
+        'addFontColor': 'Add font color',
+        'addFontSize': 'Add font size',
+        'addImage': 'Add image',
+        'addVideo': 'Add video',
+        'addFile': 'Add file',
+        'addURL': 'Add URL',
+        'addTable': 'Add table',
+        'removeStyles': 'Remove styles',
+        'code': 'Show HTML code',
+        'undo': 'Undo',
+        'redo': 'Redo',
+        'close': 'Close'
+        },
+
+        // privacy
+        youtubeCookies: false,
+
+        // preview
+        preview: false,
+
+        // placeholder
+        placeholder: '',
+
+        // dev settings
+        useSingleQuotes: false,
+        height: 0,
+        heightPercentage: 0,
+        id: "",
+        class: "",
+        useParagraph: false,
+        maxlength: 0,
+        useTabForNext: false,
+
+        // callback function after init
+        callback: undefined,
+
+        });
+
+
         getprinters();
         $("#updateprinters").click(()=>{
             alertify.confirm('تحديث قائمة', 'هل انت متاكد من انك تريد تحديث قائمة الطابعات؟',

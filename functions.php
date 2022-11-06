@@ -88,7 +88,7 @@ function getUnitesAndClass() {
 function getProductBySearch($barcode, $limit) {
     $conn = conn();
     $likeVal = str_replace(" ", "%", "%" . $barcode . "%");
-    $stmt = $conn->prepare("SELECT * FROM product WHERE barcode REGEXP ? or `name` LIKE ? or `number` LIKE ? order by trim(? from name) LIMIT ?, 50");
+    $stmt = $conn->prepare("SELECT x.resCount, product.* FROM product, (select count(*) as resCount FROM product) AS x WHERE barcode REGEXP ? or `name` LIKE ? or `number` LIKE ? order by trim(? from name) LIMIT ?, 50");
     $stmt->bind_param("ssssi", $barcode, $likeVal, $likeVal, $barcode, $limit);
 
     if ($stmt->execute()) {
@@ -364,7 +364,7 @@ function getproductsList($limit) {
     try {
         $limit = ($limit - 1);
         $conn = conn();
-        $stmt = $conn->prepare("SELECT x.resCount, p.* FROM product AS p , (select count(*) as resCount FROM product) AS x LIMIT ?, 40");
+        $stmt = $conn->prepare("SELECT x.resCount, p.* FROM product AS p , (select count(*) as resCount FROM product) AS x LIMIT ?, 50");
         $stmt->bind_param("i", $limit);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -762,8 +762,8 @@ function addNewProduct($product) {
                 }
                 $barcodes = json_encode($barcode);
             } else {
-                $barcodes = $product["barcodes"];
-                $check_exist = getProductByBarcode($barcodes);
+                $barcodes = json_encode(["leaveme".rand(119971173211878,999977873247878), $product["barcodes"]]);
+                $check_exist = getProductByBarcode($product["barcodes"]);
             }
             // check if exist
             if ($check_exist) {
@@ -1308,46 +1308,101 @@ function iqdRound($n) {
 }
 
 class PrintOrder {
-    private array $order;
-    private $size77path = "print/template/printtemplate.txt";
-    function __construct($data){
-        $this->order = $data;
+    private array $items;
+    private $templatepath = "print/template/printtemplate.txt";
+    private array $paper;
+    private array $basic;
+    private int $currentPage;
+    private int $allPages;
+
+    function __construct($basic, $items, $paper, $currentPage, $allPages){
+        $this->items = $items;
+        $this->paper = $paper;
+        $this->basic = $basic;
+        $this->currentPage = $currentPage;
+        $this->allPages = $allPages;
     }
 
-    function get77HTML($data){
+    function getHTML(){
+        $items = $this->items;
+        $paper = $this->paper;
+        $basic = $this->basic;
+        $currentPage = $this->currentPage;
+        $allPages = $this->allPages;
+
         $re = '/@foreach start(.*)@foreach end/m';
 
-        $str = str_replace("\n", "", file_get_contents($this->size77path));
+        $str = str_replace("\n", "", file_get_contents($this->templatepath));
 
         preg_match_all($re, $str, $matches, PREG_SET_ORDER, 0);
 
         //table template
         $tableTempleate = $matches[0][1];
 
+        if($paper['iqd'] === true){
+            $discount = iqdRound($basic["discount"] * getIQD()["val"]) ?? "0";
+            $total_price = iqdRound(($basic["total_price"] - $basic["discount"]) * getIQD()["val"]);
+            $sub_total = iqdRound(($basic["total_price"]) * getIQD()["val"]);
+        }else{
+            $discount = "$" . $basic["discount"] ?? 0;
+            $total_price = "$" . ($basic["total_price"] - $basic["discount"]);
+            $sub_total = "$" . $basic["total_price"];
+        }
 
         // prepare table items
         $tableItems = "";
-        foreach ($data["items"] as $key => $item){
+        foreach ($items as $key => $item){
             $moredata = getProductByBarcode($item[0]);
-            $tableItems .= str_replace(["@item_name", "@item_number", "@item_qty", "@item_price"], [$moredata["name"], $moredata["number"], $item[1], iqdRound($item[2] * getIQD()["val"])], $tableTempleate);
+            $tableItems .= str_replace(
+                [
+                    "@item_name", 
+                    "@item_number", 
+                    "@item_qty", 
+                    "@item_price"
+                ], [
+                    $moredata["name"], 
+                    $moredata["number"], 
+                    $item[1], 
+                    ($paper['iqd'] === true) ? iqdRound($item[2] * getIQD()["val"]) : $item[2]
+                ], $tableTempleate);
         }
 
         // add table items to html scrpit
         $str = str_replace($matches[0][0], $tableItems, $str);
-
-        $str = str_replace(["@discount", "@total_price", "@logo_small", "@client_name"], [iqdRound($data["discount"]), iqdRound(($data["total_price"] - $data["discount"]) * getIQD()["val"]), getSittings("logo_small"), (getConsumer($data["consumer_id"], false, true)[0]['name']) ?? "عميل افتراضي"], $str);
+        
+        $str = str_replace(
+            [
+                "@user_name",
+                "@date",
+                "@sub_total",
+                "@discount", 
+                "@total_price", 
+                "@logo_url", 
+                "@client_name", 
+                "@paper_size",
+                "@logo_width",
+                "@logo_height",
+                "@footer_text",
+                "@currentPage",
+                "@allPages",
+            ],[
+                getUserByID($_SESSION["user_id"])["name"],
+                $basic["date"],
+                $sub_total,
+                $discount,
+                $total_price,
+                getSittings($paper["logo"]), 
+                (getConsumer($basic["consumer_id"], false, true)[0]['name']) ?? "عميل افتراضي", 
+                $paper["@paper_size"],
+                $paper["@logo_width"],
+                $paper["@logo_height"],
+                $paper["@footer_text"],
+                $currentPage,
+                $allPages,
+            ], $str);
         return $str;
     }
 
-    function getHtmlString($size = "") {
-        switch ($size) {
-            case "A4":
-                break;
-            default:
-                return $this->get77HTML($this->order);
-                break;
-        }
-    }
 }
 
 function getPrinterByID($id) {
@@ -1361,6 +1416,16 @@ function getPrinterByID($id) {
                 return $row;
             }
         }
+    }
+    return false;
+}
+
+function updatePrinterSize($id,$size) {
+    $conn = conn();
+    $stmt = $conn->prepare("UPDATE printers SET size = ? WHERE id = ?");
+    $stmt->bind_param("si", $size, $id);
+    if ($stmt->execute()) {
+        return true;
     }
     return false;
 }

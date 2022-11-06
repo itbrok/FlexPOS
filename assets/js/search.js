@@ -551,7 +551,8 @@ function getThisOrderDetails() {
         "total_price": totalprice,
         "isitfinished": finished,
         "update": update,
-        "items": order
+        "items": order,
+        "date":$("#dateBar").html()
     };
     return orderDetails;
 }

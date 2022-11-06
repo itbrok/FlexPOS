@@ -9,7 +9,7 @@ define("ERROR_LOG_FILE_NAME", "error.log");
 
 // {@default variables}
 $flex = [
-    "version" => "1.1.5.9",
+    "version" => "1.1.6",
     "update_link" => "https://github.com/itbrok/Flex/raw/main/update.json",
     "installed" => false,
 ];
