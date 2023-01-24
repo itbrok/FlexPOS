@@ -118,8 +118,9 @@
                                 <canvas height="300" width="400" style="display: none;" id="product_canvas">
                             </div>
                         </form>
-                        <div class="mt-2">
-                            <button id="ok" class="btn btn-primary w-full">موافق</button>
+                        <div class="mt-2 row">
+                            <button id="ok" class="me-1 ms-1 btn col btn-primary w-full">موافق</button>
+                            <button id="reset" class="col btn btn-danger w-full">افراغ</button>
                         </div>
                     </div>
                 </div>
@@ -237,7 +238,8 @@
     }
     $(document).ready(function () {
         $("#randomBarcode").click(function (e) {
-            $("#barcodes").append(generateRandomBarcode());
+            olddata = $("#barcodes").val();
+            $("#barcodes").val(olddata + generateRandomBarcode());
         });
 
 
@@ -361,6 +363,22 @@
                 , function () { alertify.error('تم الالغاء') })
         });
 
+        $("#reset").click(function (e){
+            alertify.confirm('تفريغ الحقول','هل تريد فعلا تفريغ كافة الحقول؟',
+                function () {
+                    $("form").trigger("reset");
+                    $("#img").val("");
+                    $("#product_img").attr("src","");
+                    var unit_id_lastValue = $("#unit_id option:last").val();
+                    $("#unit_id").val(unit_id_lastValue);
+                    var class_id_lastValue = $("#class_id option:last").val();
+                    $("#class_id").val(class_id_lastValue);
+                },
+                function () {
+                    alertify.error('تم الالغاء')
+                }
+            );
+        });
 
         $('#imgInput').change(function () {
             updateProductImg(URL.createObjectURL($(this)[0].files[0]));
