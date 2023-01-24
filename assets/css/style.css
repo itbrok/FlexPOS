@@ -8,7 +8,7 @@ body{
                                     supported by Chrome, Edge, Opera and Firefox */
   }
 
-  table td{
+.tbody#quickSearchItems td, #quickSearchItems td, #items td {
     white-space: break-spaces !important;
 }
 

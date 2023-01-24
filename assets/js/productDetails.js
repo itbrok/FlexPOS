@@ -64,7 +64,7 @@ $.post("", formData, function(html) {
                         $(".prodect-details").append(`<div class="row">الوحدة : غير معروف</div>`);
                     }
                 }
-                $(".prodect-details").append(`<div class="row">الخزن : ${itemData.warehouse_name} - ${itemData.corridor} - ${itemData.shelf} - ${itemData.box}</div>`);
+                $(".prodect-details").append(`<div class="row">الخزن : ${itemData.box} - ${itemData.shelf} - ${itemData.corridor} - ${itemData.warehouse_name}</div>`);
                 $(".prodect-details").append(`<div class="row">سعر الشراء : <div class="input-group mb-3" style="max-width: 50%;" dir="ltr"><input dir="rtl" id="whpPass" type="password" placeholder="كلمة المرور" class="form-control" aria-describedby="checkPass" autocomplete="off"><span class="btn-primary input-group-text" onClick="checkPassWord()" barcode="${barcode}" id="checkPass"><i class="fas fa-check text-primary col"></i></span></div></div>`);
                 $(".prodect-details").append(`<div class="row">ملاحظات : ${itemData.note}</div>`);
             });

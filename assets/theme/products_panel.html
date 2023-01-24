@@ -90,7 +90,7 @@
     page = 1;
     // Get List of products
     function getproducts() {
-        data = ($("#quick_search").val().length >= 3) ? { search : $("#quick_search").val(), limit: limit } : { getproductsList: limit }
+        data = ($("#quick_search").val().length >= 3) ? { search : $("#quick_search").val(), limit: limit -1 } : { getproductsList: limit }
         $.post("", data, function (html) {
             try {
                 resp = JSON.parse(html);
@@ -98,7 +98,7 @@
                 return;
             }
             if (resp.ok != true) {
-                alertify.error("لاتوجد نتائج");
+                
             } else {
                 lastStoredData = resp[0];
                 addDataToTable(resp[0]);
@@ -111,15 +111,15 @@
     $(document).ready(function () {
         getproducts();
         $("#back").click(function () {
-            if (limit > 41) {
-                limit -= 41;
+            if (limit > 51) {
+                limit -= 51;
                 getproducts();
                 page--;
             }
         });
         $("#next").click(function () {
-            if ((limit + 41) <= max) {
-                limit += 41;
+            if ((limit + 51) <= max) {
+                limit += 51;
                 getproducts();
                 page++;
             }
@@ -127,18 +127,18 @@
 
 
 
-        $("#quick_search").on("keyup", function () {
+        $("#quick_search").on("input", function () {
             var value = $(this).val().toLowerCase();
             if (value.length >= 3) {
-                $.post("", { search : value, limit: limit }, function (html) {
+                $.post("", { search : value, limit: limit -1 }, function (html) {
                     try {
                         resp = JSON.parse(html);
                     } catch (error) {
-                        alertify.error("لاتوجد نتائج");
+                        
                     }
 
                     if (resp.ok != true) {
-                        alertify.error("لاتوجد نتائج");
+                        
                     } else {
                         addDataToTable(resp[0]);
                         $("#resCount").html(`${page} : عرض ${resp[0].length} من ${resp[0][0].resCount} نتيجة`);

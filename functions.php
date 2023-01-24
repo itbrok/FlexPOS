@@ -88,7 +88,7 @@ function getUnitesAndClass() {
 function getProductBySearch($barcode, $limit) {
     $conn = conn();
     $likeVal = str_replace(" ", "%", "%" . $barcode . "%");
-    $stmt = $conn->prepare("SELECT x.resCount, product.* FROM product, (select count(*) as resCount FROM product) AS x WHERE barcode REGEXP ? or `name` LIKE ? or `number` LIKE ? order by trim(? from name) LIMIT ?, 50");
+    $stmt = $conn->prepare("SELECT p.* FROM (SELECT x.resCount, product.* FROM product, (select count(*) as resCount FROM product) AS x WHERE barcode REGEXP ? or `name` LIKE ? or `number` LIKE ? order by trim(? from name)) As p LIMIT ?, 50");
     $stmt->bind_param("ssssi", $barcode, $likeVal, $likeVal, $barcode, $limit);
 
     if ($stmt->execute()) {
@@ -750,7 +750,7 @@ function isPhoneNumber($phone_number) {
 function addNewProduct($product) {
     try {
         if (empty(@$product["barcodes"]) || empty(@$product["name"])) {
-            return ["ok" => false, "msg" => "يجب ملء كافة الحقول", "code" => 5];
+            return ["ok" => false, "msg" => "يجب ملء كافة الحقول", "code" => 5, "oo"=>$product];
         } else {
             if (str_contains($product["barcodes"], "\r\n")) {
                 $barcode = explode("\r\n", $product["barcodes"]);
@@ -762,8 +762,8 @@ function addNewProduct($product) {
                 }
                 $barcodes = json_encode($barcode);
             } else {
-                $barcodes = json_encode(["leaveme".rand(119971173211878,999977873247878), $product["barcodes"]]);
-                $check_exist = getProductByBarcode($product["barcodes"]);
+                $barcodes = $product["barcodes"];
+                $check_exist = getProductByBarcode($barcodes);
             }
             // check if exist
             if ($check_exist) {
@@ -1322,56 +1322,88 @@ class PrintOrder {
         $this->currentPage = $currentPage;
         $this->allPages = $allPages;
     }
+    public function getRegxResult($regexp, $str){
+        preg_match_all($regexp, $str, $matches, PREG_SET_ORDER, 0);
+        return $matches;
+    }
 
-    function getHTML(){
+    public function getHTML(){
         $items = $this->items;
         $paper = $this->paper;
         $basic = $this->basic;
         $currentPage = $this->currentPage;
         $allPages = $this->allPages;
+        
 
-        $re = '/@foreach start(.*)@foreach end/m';
+        $htmlTemplate = str_replace("\n", "", file_get_contents($this->templatepath));
+        
+        $templateElements = ["msg", "alone_number", "client", "user", "date", "id", "itemname", "qty", "pricexqty", "priceiqd", "inventory", "sub_total", "discount", "total_price", "papernumber", "price", "logoimg"];
+        foreach($templateElements as $el){
+            $regexp = "/#$el.*?#$el/m";
+            $elCodes = array_column($this->getRegxResult($regexp, $htmlTemplate),0);
+            if($paper[$el] != "true"){
+                //$htmlTemplate = str_replace($elCodes, "", $htmlTemplate);
+            }else{
+                $htmlTemplate = str_replace("#$el", "", $htmlTemplate);
+            }
+        }
 
-        $str = str_replace("\n", "", file_get_contents($this->templatepath));
 
-        preg_match_all($re, $str, $matches, PREG_SET_ORDER, 0);
 
+        $basic["total_price"] = bcdiv($basic["total_price"],1,2);
+
+        $re = '/@foreach start(.*)@foreach end/m'; //Html ForEach loop
+        $matches = $this->getRegxResult($re, $htmlTemplate);
+        
         //table template
         $tableTempleate = $matches[0][1];
 
-        if($paper['iqd'] === true){
-            $discount = iqdRound($basic["discount"] * getIQD()["val"]) ?? "0";
-            $total_price = iqdRound(($basic["total_price"] - $basic["discount"]) * getIQD()["val"]);
+        if($paper['iqd'] == "true"){
+            $discount = $basic["discount"] ?? 0;
+            $total_price = iqdRound(($basic["total_price"] - $discount) * getIQD()["val"]);
             $sub_total = iqdRound(($basic["total_price"]) * getIQD()["val"]);
         }else{
-            $discount = "$" . $basic["discount"] ?? 0;
-            $total_price = "$" . ($basic["total_price"] - $basic["discount"]);
-            $sub_total = "$" . $basic["total_price"];
+            $discount = (round(($basic["discount"] / getIQD()["val"]),2) ?: "0") . "$";
+            $total_price = round(($basic["total_price"] - $discount),2) . "$";
+            $sub_total = $basic["total_price"] . "$";
         }
-
         // prepare table items
         $tableItems = "";
         foreach ($items as $key => $item){
             $moredata = getProductByBarcode($item[0]);
+            $itemLocation = $moredata["box"] . "-" . $moredata["shelf"]  . "-" . $moredata["corridor"]  . "-" . $moredata["warehouse_name"];
             $tableItems .= str_replace(
                 [
+                    "@itemLocation",
+                    "@alone_number",
                     "@item_name", 
                     "@item_number", 
                     "@item_qty", 
-                    "@item_price"
+                    "@item_price",
+                    "@pricexqty",
+                    "@priceiqd",
+                    "@inventory"
                 ], [
+                    ($paper['size'] == "77") ? "<br>" . $itemLocation : "",
+                    $moredata["number"] ?: "---",
                     $moredata["name"], 
-                    $moredata["number"], 
+                    ($paper['size'] == "77") ? "<br>" . $moredata["number"] : "",
                     $item[1], 
-                    ($paper['iqd'] === true) ? iqdRound($item[2] * getIQD()["val"]) : $item[2]
+                    ($paper['iqd'] == "true") ? iqdRound($item[2] * getIQD()["val"]) : $item[2],
+                    $item[2] * $item[1], 
+                    iqdRound($item[2] * $item[1] * getIQD()["val"]),
+                    $itemLocation
                 ], $tableTempleate);
         }
 
+
         // add table items to html scrpit
-        $str = str_replace($matches[0][0], $tableItems, $str);
-        
-        $str = str_replace(
+        $htmlTemplate = str_replace($matches[0][0], $tableItems, $htmlTemplate);
+
+        $htmlTemplate = str_replace(
             [
+		"@msgfooter",
+                "@order_id",
                 "@user_name",
                 "@date",
                 "@sub_total",
@@ -1384,9 +1416,11 @@ class PrintOrder {
                 "@logo_height",
                 "@footer_text",
                 "@currentPage",
-                "@allPages",
-            ],[
-                getUserByID($_SESSION["user_id"])["name"],
+                "@allPages"
+            ] ,[
+		$paper["@footer_text"],
+                $basic["order_id"],
+                getUserByID(getOrder($basic["order_id"])["employee_id"])["name"] ?: getUserByID($_SESSION["user_id"])["name"],
                 $basic["date"],
                 $sub_total,
                 $discount,
@@ -1398,9 +1432,9 @@ class PrintOrder {
                 $paper["@logo_height"],
                 $paper["@footer_text"],
                 $currentPage,
-                $allPages,
-            ], $str);
-        return $str;
+                $allPages
+            ], $htmlTemplate);
+        return $htmlTemplate;
     }
 
 }

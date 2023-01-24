@@ -1,15 +1,15 @@
 
 <script>
     <?php
-        $sizes = array_keys(json_decode(getSittings("papers"),true));
-        foreach($sizes as $i => $s){
+        $papers = json_decode(getSittings("papers"),true);
+        foreach(array_keys($papers) as $i => $s){
             $arr[$i] = "<div class=\"form-check\"><input onClick=\"selectSize('$s')\" class=\"form-check-input\" type='radio' id='$i$s' name='size'><label class='form-check-label' for='$i$s'>$s</label></div>";
         }
-
-        $papers = getSittings("papers");
+        $boleanHtmlTemplateElements = ["logoimg", "client", "user", "date", "id", "itemname", "alone_number", "qty", "price", "pricexqty", "priceiqd", "inventory", "sub_total", "discount", "total_price", "msg", "papernumber"];
+        $boleanHtmlTemplateElementsTitle = ["اللوكو", "اسم العميل", "اسم الكاشير", "التاريخ", "رقم الفاتورة", "حقل اسم المادة", "حقل رقم المادة", "حقل الكمية", "حقل سعر المفرد", "حقل مجموع السعر للمادة", "حقل مجموع السعر للمادة (عراقي)", "حقل الخزن", "المجموع الكلي قبل الخصم", "الخصم", "المجموع الكلي بعد الخصم", "الفوتر", "رقم الورقة"];
     ?>
     var sizes = `<form><?php echo implode('',$arr); ?></form>`
-    papers = <?= $papers ?>;
+    papers = <?= json_encode($papers) ?>;
 </script>
 <script src="assets\richtexteditor\jquery.richtext.min.js"></script>
 <link rel="stylesheet" href="assets\richtexteditor\richtext.min.css">
@@ -179,50 +179,83 @@
                         <div class="tab-pane fade" id="papers" role="tabpanel">
                             <div class="row justify-content-center">
                                 <div class="col-sm-6 col-md-6">
-                                    <table class="col-sm-6 col-md-6">
-                                        <thead>
-                                            <tr>
-                                                <th width="50%">
-                                                </th>
-                                                <th>
+                                    <div>
+                                        <button class="d-inline-flex align-items-center rounded" data-bs-toggle="collapse" data-bs-target="#size_77" aria-expanded="false" aria-current="true">حجم 77</button>
+                                    
+                                        
+                                        <table class="collapse" id="size_77">
+                                            <thead>
+                                                <tr>
+                                                    <th width="50%">
+                                                    </th>
+                                                    <th>
 
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr class="mb-3">
-                                                <td><h2>حجم 77</h2></td>
-                                            </tr>
-                                            <tr class="mb-3">
-                                                <td><span>عدد المواد الاقصى لكل ورقة</span></td>
-                                                <td><input class="form-control form-control-sm mb-3" id="77_max_items_count" type="number" value="30"></td>
-                                            </tr>
-                                            <tr class="mb-3">
-                                                <td><span>الاسعار</span></td>
-                                                <td>
-                                                    <div class="form-check"><input onclick="changePaper('77','iqd',true)" class="form-check-input" name="77iqd" type="radio" id="77iqdtrue"><label class='form-check-label' for='77iqdtrue'>عراقي</label></div>
-                                                    <div class="form-check"><input onclick="changePaper('77','iqd',false)" class="form-check-input" name="77iqd" type="radio" id="77iqdfalse"><label class='form-check-label' for='77iqdfalse'>دولار</label></div>
-                                                </td>
-                                            </tr>
-                                            <tr class="mb-3">
-                                                <td><h2>حجم A4</h2></td>
-                                            </tr>
-                                            <tr class="mb-3">
-                                                <td><span>عدد المواد الاقصى لكل ورقة</span></td>
-                                                <td><input class="form-control form-control-sm mb-3" id="A4_max_items_count" type="number" value="32"></td>
-                                            </tr>
-                                            <tr class="mb-3">
-                                                <td><span>الاسعار</span></td>
-                                                <td>
-                                                    <div class="form-check"><input onclick="changePaper('A4','iqd',true)" class="form-check-input" name="A4iqd" type="radio" id="A4iqdtrue"><label class='form-check-label' for='A4iqdtrue'>عراقي</label></div>
-                                                    <div class="form-check"><input onclick="changePaper('A4','iqd',false)" class="form-check-input" name="A4iqd" type="radio" id="A4iqdfalse"><label class='form-check-label' for='A4iqdfalse'>دولار</label></div>
-                                                </td>
-                                            </tr>
-                                            <tr class="mb-3">
-                                                <td><span>الفوتر</span></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="mb-3">
+                                                    <td><span>عدد المواد الاقصى لكل ورقة</span></td>
+                                                    <td><input class="form-control form-control-sm mb-3" id="77_max_items_count" type="number" value="30"></td>
+                                                </tr>
+                                                <tr class="mb-3">
+                                                    <td><span>الاسعار</span></td>
+                                                    <td>
+                                                        <div class="form-check"><input onclick="changePaper('77','iqd',true)" class="form-check-input" name="77iqd" type="radio" id="77iqdtrue"><label class='form-check-label' for='77iqdtrue'>عراقي</label></div>
+                                                        <div class="form-check"><input onclick="changePaper('77','iqd',false)" class="form-check-input" name="77iqd" type="radio" id="77iqdfalse"><label class='form-check-label' for='77iqdfalse'>دولار</label></div>
+                                                    </td>
+                                                </tr>
+                                                    <?php
+                                                    foreach($boleanHtmlTemplateElements as $key => $el){
+                                                        $checked = ($papers['77'][$el] == "true") ? "checked" : "";
+                                                        echo "<tr style=\"border-top: #569 solid 1px;\" class=\"mb-4\"><td><span>$boleanHtmlTemplateElementsTitle[$key]</span></td>
+                                                        <td>
+                                                            <div class=\"form-check\"><input onclick=\"changePaper('77','$el',true)\" class=\"form-check-input\" name=\"77$el\" type=\"radio\" id=\"77$el.true\" " . (($papers['77'][$el] == "true") ? "checked" : "") . "><label class='form-check-label' for='77$el.true'>عرض</label></div>
+                                                            <div class=\"form-check\"><input onclick=\"changePaper('77','$el',false)\" class=\"form-check-input\" name=\"77$el\" type=\"radio\" id=\"77$el.false\" " . (($papers['77'][$el] != "true") ? "checked" : "") . "><label class='form-check-label' for='77$el.false'>اخفاء</label></div>
+                                                        </td></tr>";
+                                                    }
+                                                    ?>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                    <div>
+                                        <button class="d-inline-flex align-items-center rounded" data-bs-toggle="collapse" data-bs-target="#size_A4" aria-expanded="false" aria-current="true">حجم A4</button>
+                                        <table class="collapse" id="size_A4">
+                                            <thead>
+                                                <tr>
+                                                    <th width="50%">
+                                                    </th>
+                                                    <th>
+
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="mb-3">
+                                                    <td><span>عدد المواد الاقصى لكل ورقة</span></td>
+                                                    <td><input class="form-control form-control-sm mb-3" id="A4_max_items_count" type="number" value="32"></td>
+                                                </tr>
+                                                <tr class="mb-3">
+                                                    <td><span>الاسعار</span></td>
+                                                    <td>
+                                                        <div class="form-check"><input onclick="changePaper('A4','iqd',true)" class="form-check-input" name="A4iqd" type="radio" id="A4iqdtrue"><label class='form-check-label' for='A4iqdtrue'>عراقي</label></div>
+                                                        <div class="form-check"><input onclick="changePaper('A4','iqd',false)" class="form-check-input" name="A4iqd" type="radio" id="A4iqdfalse"><label class='form-check-label' for='A4iqdfalse'>دولار</label></div>
+                                                    </td>
+                                                </tr>
+                                                    <?php
+                                                    foreach($boleanHtmlTemplateElements as $key => $el){
+                                                        echo "<tr style=\"border-top: #569 solid 1px;\" class=\"mb-4\"><td><span>$boleanHtmlTemplateElementsTitle[$key]</span></td>
+                                                        <td>
+                                                            <div class=\"form-check\"><input onclick=\"changePaper('A4','$el',true)\" class=\"form-check-input\" name=\"A4$el\" type=\"radio\" id=\"A4$el.true\" " . (($papers['A4'][$el] == "true") ? "checked" : "") . "><label class='form-check-label' for='A4$el.true'>عرض</label></div>
+                                                            <div class=\"form-check\"><input onclick=\"changePaper('A4','$el',false)\" class=\"form-check-input\" name=\"A4$el\" type=\"radio\" id=\"A4$el.false\" " . (($papers['A4'][$el] != "true") ? "checked" : "") . "><label class='form-check-label' for='A4$el.false'>اخفاء</label></div>
+                                                        </td></tr>";
+                                                    }
+                                                    ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <span>الفوتر</span>
                                     <textarea id="footer_text"></textarea>
                                     <div class="card-footer border-0 py-5">
                                     <button onclick="savePapers()" class="btn col btn-sm btn-outline-primary">حفظ <i class="fa-solid fa-rotate"></i></button>
@@ -396,13 +429,13 @@
         //Set papers
         $("#77_max_items_count").val(papers["77"]["@max_items_count"]);
         $("#A4_max_items_count").val(papers["A4"]["@max_items_count"]);
-        if(papers["77"]["iqd"] == true){
+        if(papers["77"]["iqd"] === true || papers["77"]["iqd"] === "true"){
             $("#77iqdtrue").attr("checked",true);
         }else{
             $("#77iqdfalse").attr("checked",true);
         }
         
-        if(papers["A4"]["iqd"] == true){
+        if(papers["A4"]["iqd"] === true || papers["A4"]["iqd"] === "true"){
             $("#A4iqdtrue").attr("checked",true);
         }else{
             $("#A4iqdfalse").attr("checked",true);

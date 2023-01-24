@@ -1,9 +1,15 @@
 <!DOCTYPE html>
+<!-- اي تعديل على هذا الملف بالخصوص يخل بالعقد -->
 <html dir="rtl" itemscope itemtype="http://schema.org/WebPage" lang="ar-IQ">
 
 <head>
     <meta charset="UTF-8">
     <style>
+        td {
+            border: black solid 1px;
+            text-align: center;
+        }
+        
         body {
             font-family: SF-Arabic
         }
@@ -41,7 +47,11 @@
         }
 
         #mid {
-            min-height: 5mm
+            min-height: 5mm;
+        }
+
+        #mid h2{
+            margin: 0 auto;
         }
 
         #bot {
@@ -63,7 +73,7 @@
 
         table {
             width: 100%;
-            border-collapse: collapse
+            border-spacing: 0;
         }
 
         .tabletitle {
@@ -83,52 +93,80 @@
 <body>
     <div id="invoice-POS">
         <center id="top">
-            <div class="logo"></div>
+            #logoimg<div class="logo"></div>#logoimg
         </center>
-        <div id="mid">
-            <h2 style="display: inline-block;">التاريخ : @date</h2>
-            <h2 style="display: inline-block;">العميل : @client_name</h2>
-            <h2 style="display: inline-block;">الكاشير : @user_name</h2>
+        <div id="flexrow mid">
+            #client<h2>العميل : @client_name</h2>#client
+            #user<h2>الكاشير : @user_name</h2>#user
+            #date<h2>التاريخ : @date</h2>#date
+            #id<h2>الفاتورة : @order_id</h2>#id
         </div>
         <div id="bot">
             <div id="table">
                 <table>
                     <tr class="tabletitle">
-                        <td class="item">
+                        #itemname<td>
                             <h2>المادة</h2>
-                        </td>
-                        <td class="qty">
-                            <h2>عدد</h2>
-                        </td>
-                        <td class="Rate">
-                            <h2>السعر</h2>
-                        </td>
+                        </td>#itemname
+                        #alone_number<td class="qty">
+                            <h2>رقم المادة</h2>
+                        </td>#alone_number
+                        #qty<td>
+                            <h2>الكمية</h2>
+                        </td>#qty
+                        #price<td>
+                            <h2>سعر المفرد</h2>
+                        </td>#price
+                        #pricexqty<td>
+                            <h2>المجموع دولار</h2>
+                        </td>#pricexqty
+                        #priceiqd<td>
+                            <h2>المجموع عراقي</h2>
+                        </td>#priceiqd
+                        #inventory<td>
+                            <h2>الخزن</h2>
+                        </td>#inventory
                     </tr>
                     @foreach start
                     <tr class="service">
-                        <td class="tableitem">
-                            <p class="itemtext">@item_name @item_number</p>
-                        </td>
-                        <td class="tableitem">
+                        #itemname<td>
+                            <p class="itemtext">@item_name@item_number</p>
+                        </td>#itemname
+                        #alone_number<td>
+                            <p class="itemtext">@alone_number</p>
+                        </td>#alone_number
+                        #qty<td>
                             <p class="itemtext">@item_qty</p>
-                        </td>
-                        <td class="tableitem">
-                            <p class="itemtext">@item_price</p>
-                        </td>
+                        </td>#qty
+                        #price<td>
+                            <p class="itemtext">@item_price@itemLocation</p>
+                        </td>#price
+                        #pricexqty<td>
+                            <p class="itemtext">@pricexqty</p>
+                        </td>#pricexqty
+                        #priceiqd<td>
+                            <p class="itemtext">@priceiqd</p>
+                        </td>#priceiqd
+                        #inventory<td>
+                            <p class="itemtext">@inventory</p>
+                        </td>#inventory
                     </tr>
                     @foreach end
                 </table>
-                <h2 class="tabletitle">المجموع : @sub_total</h2>
-                <h2 class="tabletitle">الخصم : @discount</h2>
-                <h2 class="tabletitle">المجموع النهائي : @total_price</h2>
+                #sub_total<h2 class="tabletitle">المجموع : @sub_total</h2>#sub_total
+                #discount<h2 class="tabletitle">الخصم : @discount</h2>#discount
+                #total_price<h2 class="tabletitle">المجموع النهائي : @total_price</h2>#total_price
             </div>
+		#msg
             <div id="legalcopy">
-                <p class="legal"><strong>شكرا لتسوقكم منا</strong><br>نشوفكم بعدين</p>
+                @msgfooter
             </div>
+		#msg
         </div>
     </div>
     <center>
-        ورقة رقم @currentPage من @allPages
+        #papernumber<div>ورقة رقم @currentPage من @allPages</div>#papernumber
+        <!-- حذف اسم التطبيق يخل بالعقد -->
         <p>تطبيق Flex</p>
     </center>
 </body>
