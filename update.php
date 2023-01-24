@@ -53,88 +53,107 @@ function checkUpdate($update = false) {
 
             $po->text = "تنزيل ملفات التحديث";
             // Download the zip file that contains the new version
-            file_put_contents($file, file_get_contents($values["zip"]));
+            // Download the zip file that contains the new version
+            $dfile = fopen($file, 'w');
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $values["zip"]);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 1900);
+            curl_setopt($ch, CURLOPT_FILE, $dfile);
 
-            str_repeat(' ', 2480);
+            $result = curl_exec($ch);
 
-            $po->Animate();
-
-            //push the content out to the browser
-            ob_flush();
-            flush();
-            // get the absolute path to $file
-            $path = pathinfo(realpath($file), PATHINFO_DIRNAME);
-            $zip = new ZipArchive;
-            $res = $zip->open($file);
-
-            $po->Animate();
-
-            //push the content out to the browser
-            ob_flush();
-            flush();
-            //push the content out to the browser
-            ob_flush();
-            flush();
-            $po->Animate();
-
-            //push the content out to the browser
-            ob_flush();
-            flush();
-            $po->Animate();
-
-            if ($res === TRUE) {
-                $po->text = "استخراج الملفات";
-                DeleteDir(DIR);
-                $po->Animate();
-
-                //push the content out to the browser
-                ob_flush();
-                flush();
-                $po->Animate();
-
-
-                //push the content out to the browser
-                $po->text = "جار التحديث";
-                ob_flush();
-                flush();
-
-
-                $config_data = $conn_;
-                // extract it to the path we determined above
-                $zip->extractTo($path);
-                $zip->close();
-                $po->Animate();
-
-                //push the content out to the browser
-                ob_flush();
-                flush();
-                
-                $config_file = file_get_contents("config.php");
-                $config_file = str_replace(["#HOST", "#USERNAME", "#PASSWORD", "#DBNAME"], [$config_data["host"], $config_data["user"], $config_data["pass"], $config_data["dbna"]], $config_file);
-                file_put_contents("config.php", $config_file);
-                $po->Animate();
-
-                //push the content out to the browser
-                ob_flush();
-                flush();
-                $po->Animate();
-
-                //push the content out to the browser
-                ob_flush();
-                flush();
-                unlink($file);
-                $po->Animate();
-
-                //push the content out to the browser
-                $po->text = "اكتمل التحديث";
-                ob_flush();
-                flush();
-                usleep(50000);
-                $po->Hide();
-                ob_flush();
-                flush();
+            if ($result === false) {
+                curl_close($ch);
+                fclose($dfile);
+                echo 'Error: ' . curl_error($ch);
             } else {
-                $po->text = "حدث خطا اثناء استخراج البيانات";
+                curl_close($ch);
+                fclose($dfile);
+
+                str_repeat(' ', 2480);
+
+                $po->Animate();
+
+                //push the content out to the browser
+                ob_flush();
+                flush();
+                // get the absolute path to $file
+                $path = pathinfo(realpath($file), PATHINFO_DIRNAME);
+                $zip = new ZipArchive;
+                $res = $zip->open($file);
+
+                $po->Animate();
+
+                //push the content out to the browser
+                ob_flush();
+                flush();
+                //push the content out to the browser
+                ob_flush();
+                flush();
+                $po->Animate();
+
+                //push the content out to the browser
+                ob_flush();
+                flush();
+                $po->Animate();
+
+                if ($res === TRUE) {
+                    $po->text = "استخراج الملفات";
+                    DeleteDir(DIR);
+                    $po->Animate();
+
+                    //push the content out to the browser
+                    ob_flush();
+                    flush();
+                    $po->Animate();
+
+
+                    //push the content out to the browser
+                    $po->text = "جار التحديث";
+                    ob_flush();
+                    flush();
+
+
+                    $config_data = $conn_;
+                    // extract it to the path we determined above
+                    $zip->extractTo($path);
+                    $zip->close();
+                    $po->Animate();
+
+                    //push the content out to the browser
+                    ob_flush();
+                    flush();
+                    
+                    $config_file = file_get_contents("config.php");
+                    $config_file = str_replace(["#HOST", "#USERNAME", "#PASSWORD", "#DBNAME"], [$config_data["host"], $config_data["user"], $config_data["pass"], $config_data["dbna"]], $config_file);
+                    file_put_contents("config.php", $config_file);
+                    $po->Animate();
+
+                    //push the content out to the browser
+                    ob_flush();
+                    flush();
+                    $po->Animate();
+
+                    //push the content out to the browser
+                    ob_flush();
+                    flush();
+                    unlink($file);
+                    $po->Animate();
+
+                    //push the content out to the browser
+                    $po->text = "اكتمل التحديث";
+                    ob_flush();
+                    flush();
+                    usleep(50000);
+                    $po->Hide();
+                    ob_flush();
+                    flush();
+                } else {
+                    $po->text = "حدث خطا اثناء استخراج البيانات";
+                }
             }
         }else{
             return ["ok" => true, 3]; // "There is a new version"
