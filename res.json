@@ -797,12 +797,12 @@
             "funcname": "updateSetting",
             "params": [
                 {
-                    "type": "post",
+                    "type": "str",
                     "value": "papers"
                 },
                 {
-                    "type": "post",
-                    "value": "json_encode('update_papers'"
+                    "type": "post-json",
+                    "value": "update_papers"
                 }
             ],
             "condition": "$data != false",
