@@ -140,6 +140,8 @@ if (@$_POST) {
 
         if (key_exists("logout", $_GET)) {
             logout();
+        } else if(key_exists("reload", $_GET)){
+            header("Location: " . $_SERVER["PHP_SELF"]);
         } else {
             if (checkRole($_SESSION["user_id"], "admin_panel")) {
                 $admin_panel = [
