@@ -8,7 +8,7 @@ if($flex["installed"] == false) {
     if(file_exists("install/install.php")) {
         include_once "install/install.php";
     }else{
-        echo "<div>Flex is not Installed</div>";
+        echo "<b>Flex is not Installed</b>";
     }
     exit;
 }
