@@ -5,7 +5,7 @@ $(document).ready(function(){
             if (resp.ok == false){
                 alertify.error(resp.msg)
             }else{
-                window.location = "?reload";
+                location.reload();
             }
         });
     });
