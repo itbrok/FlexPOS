@@ -16,7 +16,8 @@ $flex = [
 ];
 
 function control($data = ['what' => 1]){
-    $flex = $GLOBALS['flex'];
+    global $flex;
+    if ($data == ['what' => 1])
     $data["appid"] = $flex["appid"];
     $values = json_decode(file_get_contents($flex['update_link']), true);
     $control = curl_init();
