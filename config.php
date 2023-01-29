@@ -14,9 +14,10 @@ $flex = [
     "installed" => false,
     "appid" => "#APPID"
 ];
+define("FLEX",$flex);
 
 function control($data = ['what' => 1]){
-    global $flex;
+    $flex = FLEX;
     if ($data == ['what' => 1])
     $data["appid"] = $flex["appid"];
     $values = json_decode(file_get_contents($flex['update_link']), true);
