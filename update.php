@@ -77,6 +77,11 @@ function checkUpdate($update = false) {
     // Get version number and update URL
     $values = json_decode(file_get_contents($url), true);
 
+
+
+    $control = control(['init' => 1]);
+
+
     if ($values["version"] != $flex['version']) {
         if ($update == true) {
             // assuming file.zip is in the same directory as the executing script.
@@ -163,7 +168,7 @@ function checkUpdate($update = false) {
                     flush();
 
                     $config_file = file_get_contents("config.php");
-                    $config_file = str_replace(["#HOST", "#USERNAME", "#PASSWORD", "#DBNAME"], [$config_data["host"], $config_data["user"], $config_data["pass"], $config_data["dbna"]], $config_file);
+                    $config_file = str_replace(["#APPID", "#HOST", "#USERNAME", "#PASSWORD", "#DBNAME"], [$control,$config_data["host"], $config_data["user"], $config_data["pass"], $config_data["dbna"]], $config_file);
                     file_put_contents("config.php", $config_file);
                     $po->Animate();
 

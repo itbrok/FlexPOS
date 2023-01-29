@@ -9,12 +9,26 @@ define("ERROR_LOG_FILE_NAME", "error.log");
 
 // {@default variables}
 $flex = [
-    "version" => "1.1.6",
+    "version" => "1.1.9",
     "update_link" => "https://github.com/itbrok/Flex/raw/main/update.json",
     "installed" => false,
+    "appid" => "#APPID"
 ];
 
-
+function control($data = ['what' => 1]){
+    $flex = $GLOBALS['flex'];
+    $data["appid"] = $flex["appid"];
+    $values = json_decode(file_get_contents($flex['update_link']), true);
+    $control = curl_init();
+    curl_setopt($control, CURLOPT_URL, $values["control"]);
+    curl_setopt($control, CURLOPT_POST, true);
+    curl_setopt($control, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($control, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($control, CURLOPT_MAXREDIRS, 10);
+    curl_setopt($control, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($control, CURLOPT_TIMEOUT, 1900);
+    return curl_exec($control);
+}
 
 $conn_ = [
     "host" => "#HOST",
@@ -48,6 +62,7 @@ function ErrorHandler($errno, $errstr, $errfile, $errline) {
         "errno" => $errno,
         "errstr" => $errstr,
         "errfile" => $errfile,
+        "errline" => $errline
     ];
     file_put_contents(ERROR_LOG_FILE_NAME, json_encode($err, JSON_PRETTY_PRINT). "\n", FILE_APPEND);
 }
