@@ -265,12 +265,12 @@
                     "value": "getconsumer"
                 },
                 {
-                    "type": "post",
-                    "value": "false"
+                    "type": "bool",
+                    "value": false
                 },
                 {
-                    "type": "post",
-                    "value": "true"
+                    "type": "bool",
+                    "value": true
                 }
             ],
             "condition": "$data",

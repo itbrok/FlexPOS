@@ -40,7 +40,7 @@
                             <div class="row">
                                 <div class="col">
                                     <span class="h6 font-semibold text-muted text-sm d-block mb-2">المنتجات</span>
-                                    <span id="ProductsCount" class="h3 font-bold mb-0"></span>
+                                    <span id="ProductsCount" class="h3 font-bold mb-0">0</span>
                                 </div>
                                 <div class="col-auto">
                                     <div class="icon icon-shape bg-primary text-white text-lg rounded-circle">
@@ -121,6 +121,7 @@
                     resp = JSON.parse(data);
                     if (resp.ok != true) {
                         alertify.error(resp.msg);
+                        $(`#${element}`).html("0");
                     } else {
                         $(`#${element}`).html(resp[0]);
                     }

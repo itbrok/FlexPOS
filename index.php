@@ -72,6 +72,8 @@ if (@$_POST) {
                 getPostArgs($param["value"], $arg, true);
             }elseif($param["type"] == "str"){
                 $arg[] = $param["value"];
+            }elseif($param["type"] == "bool"){
+                $arg[] = $param["value"];
             }
         }
         return $arg;
