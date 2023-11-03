@@ -357,7 +357,7 @@
                                     <button type="button" class="sellForConsumerCloseButton btn btn-sm btn-secondary"
                                         data-bs-dismiss="modal">اغلاق</button>
                                     <button type="button" id="debt" class="btn btn-outline-danger"
-                                        data-bs-toggle="modal" data-bs-target="#debtPad" onclick="$(\"#price_paid\").focus();">ذمة</button>
+                                        data-bs-toggle="modal" data-bs-target="#debtPad" onclick="$('#price_paid').focus();">ذمة</button>
                                     <button type="button" id="sellForConsumerSaveButton" data-bs-dismiss="modal"
                                         class="btn paidequaltotal sellNow btn-primary">بيع</button>
                                 </div>
