@@ -226,7 +226,7 @@
                             class="me-3 text-xs btn btn-sm btn-outline-success btn-round btn-block"
                             data-bs-toggle="modal" data-bs-target="#sellForConsumer"><i class="fa fa-user"></i> بيع
                             لعميل </button-->
-                        <button type="button" id="debt" class="btn btn-outline-danger"
+                        <button type="button" id="debt" class="me-3 text-xs btn btn-sm btn-danger btn-round btn-block"
                                 data-bs-toggle="modal" data-bs-target="#debtPad" onclick="$('#price_paid').focus();">ذمة</button>
                         <button id="orderhold" class="me-3 text-xs btn btn-sm btn-secondary btn-round btn-block"><i
                                 class="far fa-clock"></i> تعليق</button>
