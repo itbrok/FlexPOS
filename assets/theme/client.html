@@ -146,7 +146,7 @@
     function addOrdersDataToTable(data) {
         totalPaid = 0;
         totalLeft = 0;
-        data.forEach(function (item) {
+        data.rows.forEach(function (item) {
             $("#allOrdersList").append(`<tr class="${(item.price_left > 0 && item.isitfinished == 1) ? "bg-red-200" : ((item.isitfinished == 1) ? "" : "bg-green-200")}" onclick="window.location='?p=salse_panel&ev=1&eval=loadOrder(${item.order_id},false)'" id="qsitm${item.order_id}">`);
             $("#qsitm" + item.order_id).append('<td>' + item.order_id + '</td>');
             $("#qsitm" + item.order_id).append('<td>' + item.items_count + '</td>');
@@ -159,7 +159,7 @@
             $("#allOrdersList").append('</tr>');
             totalPaid += parseInt(item.price_paid);
         });
-        $(".ordersRes").html(`عدد الفواتير : ${data.length} مجموع الواصل : ${totalPaid} مجموع المتبقي : ${data.left}`);
+        $(".ordersRes").html(`عدد الفواتير : ${data.rows.length} مجموع الواصل : ${totalPaid} مجموع المتبقي : ${data.left}`);
     }
     function addItemsDataToTable(data) {
         totalQty = 0;

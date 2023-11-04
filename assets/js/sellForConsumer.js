@@ -41,7 +41,7 @@ $(document).ready(function () {
                     $(".quickConsumerSearch").html('');
                     try {
                         itemData.forEach(function (item) {
-                            $(".quickConsumerSearch").append(`<tr onclick="saveclient(${item.id},'${item.name}')" class="cqs${item.id}">`);
+                            $(".quickConsumerSearch").append(`<tr onclick="saveclient(${item.id},'${item.name}')" class="cqs${item.id} ${(item.isRed == 1) ? "bg-red-200" : ""}">`);
                             $(".cqs" + item.id).append('<td>' + item.name + '</td>');
                             $(".quickConsumerSearch").append('</tr>');
                         });

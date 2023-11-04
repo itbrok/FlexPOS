@@ -131,89 +131,80 @@
                     </div>
                     <div class="row" style="margin-left: 0 !important;">
 
-                        <div class="col">
-                            <div class="row">
-                                <div class="row">
-                                    <div class="sticky col" style="height: 30%;">
-                                        <div class="card">
-                                            <div class="row">
-                                                <div class="col mt-4 me-2" style="max-width: 22%;">
-                                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                                        <li class="nav-item ms-4" role="presentation">
-                                                            <button class="nav-link active" data-bs-toggle="tab"
-                                                                data-bs-target="#q_search" type="button" role="tab"
-                                                                aria-selected="true">المواد</button>
-                                                        </li>
-                                                        <li class="nav-item" role="presentation">
-                                                            <button class="nav-link" data-bs-toggle="tab"
-                                                                data-bs-target="#_client" type="button" role="tab"
-                                                                aria-selected="false">العميل</button>
-                                                        </li>
-                                                    </ul>
-                                                    <div class="tab-content">
-                                                        <div class="tab-pane fade show active" id="q_search"
-                                                            role="tabpanel">
-                                                            <input type="search"
-                                                                style="padding-right: 2.25rem !important;"
-                                                                class="form-control form-control-sm form-control-sm mt-1 p-2 text-sm font-semibold shadow-none rounded-pill"
-                                                                id="quick_search" placeholder="بحث" autocomplete="off">
-                                                            <div class="row">
-                                                                <div style="overflow: auto; max-height: 260px;">
-                                                                    <table class="table table-striped table-hover">
-                                                                        <tbody id="quickSearchItems"
-                                                                            style="max-width: 19%;">
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="tab-pane fade" id="_client" role="tabpanel">
-                                                            <div dir="rtl">
-                                                                <div>
-                                                                    <input type="search"
-                                                                        style="padding-right: 2.25rem !important;"
-                                                                        class="form-control form-control-sm form-control-sm mt-1 p-2 text-sm font-semibold shadow-none rounded-pill sellForConsumerSearchBar"
-                                                                        placeholder="الاسم" autocomplete="off">
-                                                                    <div class="row">
-                                                                        <div style="overflow: auto; max-height: 200px;">
-                                                                            <table
-                                                                                class="table table-striped table-hover">
-                                                                                <tbody class="quickConsumerSearch">
-                                                                                </tbody>
-                                                                            </table>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-
-                                                </div>
-                                                <span class="col" id="cart"
-                                                    style="overflow: auto; min-height: 340px; max-height: 340px;">
-                                                    <table id="orderTable"
-                                                        class="table text-center table-striped table-hover">
-                                                        <thead>
-                                                            <tr>
-                                                                <th width="7%" scope="col">حذف</th>
-                                                                <th scope="col">المادة</th>
-                                                                <th scope="col">الكمية</th>
-                                                                <th scope="col">سعر البيع</th>
-                                                                <th scope="col">المخزن</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody id="items">
-                                                        </tbody>
-                                                    </table>
-                                                </span>
+                        
+                        <div class="row">
+                            <div class="col card me-2" style="max-width: 22%;min-height: 340px;margin-left: 9px;margin-left: 9;">
+                                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                    <li class="nav-item ms-4" role="presentation">
+                                        <button class="nav-link active" data-bs-toggle="tab"
+                                            data-bs-target="#q_search" type="button" role="tab"
+                                            aria-selected="true">المواد</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" data-bs-toggle="tab"
+                                            data-bs-target="#_client" type="button" role="tab"
+                                            aria-selected="false">العميل</button>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="q_search"
+                                        role="tabpanel">
+                                        <input type="search"
+                                            style="padding-right: 2.25rem !important;"
+                                            class="form-control form-control-sm form-control-sm mt-1 p-2 text-sm font-semibold shadow-none rounded-pill"
+                                            id="quick_search" placeholder="بحث" autocomplete="off">
+                                        <div class="row">
+                                            <div style="overflow: auto; max-height: 260px;">
+                                                <table class="table table-striped table-hover">
+                                                    <tbody id="quickSearchItems"
+                                                        style="max-width: 19%;">
+                                                    </tbody>
+                                                </table>
                                             </div>
-                                        </div> <!-- card.// -->
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="_client" role="tabpanel">
+                                        <div dir="rtl">
+                                            <div>
+                                                <input type="search"
+                                                    style="padding-right: 2.25rem !important;"
+                                                    class="form-control form-control-sm form-control-sm mt-1 p-2 text-sm font-semibold shadow-none rounded-pill sellForConsumerSearchBar"
+                                                    placeholder="الاسم" autocomplete="off">
+                                                <div class="row">
+                                                    <div style="overflow: auto; max-height: 200px;">
+                                                        <table
+                                                            class="table table-striped table-hover">
+                                                            <tbody class="quickConsumerSearch">
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+
+
                             </div>
+                            <span class="col card" id="cart"
+                                style="overflow: auto; min-height: 340px; max-height: 340px;">
+                                <table id="orderTable"
+                                    class="table text-center table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th width="7%" scope="col">حذف</th>
+                                            <th scope="col">المادة</th>
+                                            <th scope="col">الكمية</th>
+                                            <th scope="col">سعر البيع</th>
+                                            <th scope="col">المخزن</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="items">
+                                    </tbody>
+                                </table>
+                            </span>
                         </div>
-                    </div>
+                                        
                 </div>
                 <div class="mt-3">
                     <div class="form-check form-switch ms-2" style="display: inline-block;">
@@ -231,11 +222,12 @@
                             class="me-3 text-xs btn btn-sm paidequaltotal sellNow btn-primary btn-round btn-block"><i
                                 class="fa fa-shopping-bag"></i> بيع</button>
 
-                        <button id="sellForConBtn"
+                        <!--button id="sellForConBtn"
                             class="me-3 text-xs btn btn-sm btn-outline-success btn-round btn-block"
                             data-bs-toggle="modal" data-bs-target="#sellForConsumer"><i class="fa fa-user"></i> بيع
-                            لعميل </button>
-
+                            لعميل </button-->
+                        <button type="button" id="debt" class="btn btn-outline-danger"
+                                data-bs-toggle="modal" data-bs-target="#debtPad" onclick="$('#price_paid').focus();">ذمة</button>
                         <button id="orderhold" class="me-3 text-xs btn btn-sm btn-secondary btn-round btn-block"><i
                                 class="far fa-clock"></i> تعليق</button>
 
@@ -243,9 +235,9 @@
                             class="me-3 text-xs btn btn-sm btn-outline-dark btn-round btn-block"><i
                                 class="fas fa-list"></i> عرض المعلق</button>
 
-                        <button data-bs-toggle="modal" data-bs-target="#payDebt"
+                        <!--button data-bs-toggle="modal" data-bs-target="#payDebt"
                             class="me-3 text-xs btn btn-sm btn-danger btn-round btn-block"><i
-                                class="fa fa-file-invoice-dollar"></i> تسديد فاتوره </button>
+                                class="fa fa-file-invoice-dollar"></i> تسديد فاتوره </button-->
 
                         <button id="clear" class="me-3 text-xs btn btn-sm btn-outline-danger btn-round btn-block"><i
                                 class="fa fa-times-circle"></i> الغاء</button>

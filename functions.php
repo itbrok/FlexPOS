@@ -179,7 +179,11 @@ function getDebtValue($clientId) {
     if ($priceLeft == false) {
         $priceLeft = 0;
     }
-    return $moneyPaid - $priceLeft;
+    if($moneyPaid < $priceLeft){
+        return $moneyPaid - $priceLeft;
+    }else{
+        return 0;
+    }
 }
 
 function payDebt($consumer_id, $val) {
@@ -500,14 +504,11 @@ function getClients($limit) {
                 if ($moneyPaid == false) {
                     $moneyPaid = 0.000;
                 }
-                $priceLeft = getPriceLeft($row['id']);
-                if ($priceLeft == false) {
-                    $priceLeft = 0.000;
-                }
                 $pricePaid = getPricePaid($row['id']);
                 if ($pricePaid == false) {
                     $pricePaid = 0.000;
                 }
+                $priceLeft = str_replace("-","",getDebtValue($row['id']));
                 $row['MoneyPaid'] = $moneyPaid + $pricePaid;
                 $row['MoneyLeft'] = $priceLeft;
                 $row['isRed'] = ($priceLeft > 0) ? 1 : 0;
@@ -642,9 +643,9 @@ function getAllClientsOrders($id) {
             $result = $stmt->get_result();
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
-                    $rows[] = $row;
+                    $rows['rows'][] = $row;
                 }
-                $rows["left"] = getDebtValue($id);
+                $rows["left"] = str_replace("-","",getDebtValue($id));
                 return $rows;
             }
         } else {
@@ -712,6 +713,8 @@ function getConsumer($q, $equal = false, $useid = false) {
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
+            $priceLeft = str_replace("-","",getDebtValue($row['id']));
+            $row['isRed'] = ($priceLeft > 0) ? 1 : 0;
             $rows[] = $row;
         }
         return $rows;
