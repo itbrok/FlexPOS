@@ -644,6 +644,7 @@ function getAllClientsOrders($id) {
                 while ($row = $result->fetch_assoc()) {
                     $rows[] = $row;
                 }
+                $rows["left"] = getDebtValue($id);
                 return $rows;
             }
         } else {

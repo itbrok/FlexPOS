@@ -93,7 +93,7 @@
                                                 <div class="col-auto">
                                                     <div
                                                         class="icon icon-shape bg-primary text-white text-lg rounded-circle">
-                                                        <i class="fa fa-tag"></i>
+                                                        <i class="fa fa-gift"></i>
                                                     </div>
                                                 </div>
                                             </div>
@@ -290,11 +290,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-floating mb-3 payDebtprice_paid" data-bs-toggle="modal"
-                                        data-bs-target="#numPad" onclick="saveParam('updateDebtPricePaid(newval)')">
+                                    <div class="form-floating mb-3 payDebtprice_paid" onclick="saveParam('updateDebtPricePaid(newval)')">
                                         <input type="text" class="form-control form-control-sm bg-white"
                                             name="price_paid" id="payDebtprice_paid"
-                                            placeholder="المبلغ المدفوع (دولار)" autocomplete="off" disabled>
+                                            placeholder="المبلغ المدفوع (دولار)" autocomplete="off">
                                         <label for="payDebtprice_paid">المبلغ المدفوع (دولار)</label>
                                     </div>
                                     <div class="form-floating mb-3">
@@ -436,8 +435,7 @@
                             </div>
                             <div class="modal-body col">
                                 <div dir="rtl">
-                                    <div class="form-floating mb-3 price_paid"
-                                        data-bs-target="#numPad" onclick="saveParam('updatePricePaid(newval)')">
+                                    <div class="form-floating mb-3 price_paid" onclick="saveParam('updatePricePaid(newval)')">
                                         <input type="text" class="form-control form-control-sm bg-white"
                                             name="price_paid" id="price_paid" placeholder="المبلغ المدفوع (دولار)"
                                             autocomplete="off">

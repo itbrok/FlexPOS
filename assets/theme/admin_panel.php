@@ -85,7 +85,7 @@
                     </a>
 
                     <a class="nav-link" href="?p=class_panel">
-                        <i class="fa-solid fa-check"></i> الانواع
+                        <i class="fa-solid fa-tag"></i> الانواع
                     </a>
                     <a class="nav-link" href="?p=settings_panel">
                         <i class="fa-solid fa-gear"></i> الاعدادات

@@ -158,9 +158,8 @@
             $("#qsitm" + item.order_id).append('<td>' + item.date + '</td>');
             $("#allOrdersList").append('</tr>');
             totalPaid += parseInt(item.price_paid);
-            totalLeft += parseInt(item.price_left);
         });
-        $(".ordersRes").html(`عدد الفواتير : ${data.length} مجموع الواصل : ${totalPaid} مجموع المتبقي : ${totalLeft}`);
+        $(".ordersRes").html(`عدد الفواتير : ${data.length} مجموع الواصل : ${totalPaid} مجموع المتبقي : ${data.left}`);
     }
     function addItemsDataToTable(data) {
         totalQty = 0;
