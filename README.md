@@ -1,3 +1,10 @@
+<span style="color:red">
+🚨 Urgent Help Needed! 🚨  
+Please help — I’m looking for contributors to join this project.  
+Any help is appreciated, whether it's code, design, documentation, or testing.  
+If you're interested, please reach out or open a pull request!
+</span>
+
 # Flex POS
 
 Flex POS is a lightweight PHP-based point-of-sale and inventory management application. It includes an admin dashboard, customer and order management, and the ability to print receipts using predefined templates.
