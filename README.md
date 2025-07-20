@@ -46,7 +46,8 @@
 _لتثبيت التطبيق:_
 ### **اعداد البيئة**
 
-* عند تشغيل Xampp
+* عند تشغيل <a href="https://www.apachefriends.org/index.html" target="_blank">XAMPP</a>
+
 <img width="668" height="433" alt="image" src="https://github.com/user-attachments/assets/eeeefc2a-0a0c-4034-9c26-108c98692768" />
 
 * ثبت Apache Service و MySQL Service من خلال النقر على <img width="23" height="25" alt="image" src="https://github.com/user-attachments/assets/8b2b35a1-1066-4e9b-9f14-3e16aed31690" />
