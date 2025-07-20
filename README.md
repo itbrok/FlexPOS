@@ -1,112 +1,96 @@
-<span style="color:red">
-🚨 Urgent Help Needed! 🚨  
-<br>
-Please help — I’m looking for contributors to join this project.  
-Any help is appreciated, whether it's code, design, documentation, or testing.  
-If you're interested, please reach out or open a pull request!
-</span>
+<p  dir="rtl">
+🇮🇶 **هذا المشروع عراقي، ومجاني للجميع، ومتاح للاستخدام بأي شكل من الأشكال** 🔓✨
 
-# Flex POS
+تحت مبدأ **المعرفة المفتوحة** 📚، نسعى إلى **دعم المجتمع** 🤝 من خلال إتاحة هذا المشروع دون قيود.
+يمكنك استخدامه، تعديله، أو إعادة نشره بحرية تامة 🔄🛠️📤
 
-Flex POS is a lightweight PHP-based point-of-sale and inventory management application. It includes an admin dashboard, customer and order management, and the ability to print receipts using predefined templates.
+---
+🚨 مساعدة عاجلة مطلوبة! 🚨  
 
-## Features
-- Manage products with barcode search
-- Quick product search box in the admin dashboard
-- Track clients, orders and outstanding debts
-- Print sales receipts through a configurable printer
-- User accounts with role-based access and an admin panel
-- Dashboard navigation links are shown only for roles the user has
-- Notification bell shows count of recent orders
-- Mark notifications as read from the admin panel
-- Optional dark mode with persistent preference
-- All pages include the dark mode toggle
-- Dark mode updates Webpixels components for readability
-- Upload a custom logo from the settings panel
-- Export client or order lists as CSV from the management panels
-- Fully localized interface with English and Arabic translations
+أرجو المساعدة — أبحث عن مساهمين للانضمام إلى هذا المشروع.  
+كل أنواع المساعدة مرحب بها، سواء في البرمجة أو التصميم أو التوثيق أو الاختبار.  
+إذا كنت مهتماً، يرجى التواصل أو فتح طلب سحب (Pull Request)!
 
-## Prerequisites
-- PHP 7.4 or later with the MySQLi extension
-- MySQL database server
-- A web server such as Apache or Nginx
 
-## Installation
-1. Clone this repository into a directory served by your web server.
-2. Give the web server permission to write to the `print` directory.
-3. Navigate to `/install/` in your browser and fill out the form with your database host, admin account credentials, company information and preferred language.
-4. The installer will create the database, set the company settings and admin user, update `config.php`, and configure initial data.
-5. When installation completes, the `install` folder will be removed automatically.
-6. *(Optional)* Load sample data for quick testing by executing the SQL files under `scripts/` against your database.
+# **Flex POS**
 
-## Configuration
-All configuration values are stored in `config.php`. Update the timezone, app ID or database credentials here if needed. You can also adjust printer settings and other options from the admin panel once logged in. The active UI language is controlled by `DEFAULT_LANG` or `$_SESSION['lang']` and translation files under `lang/`.
-You can change the interface language at any time from the Settings panel. The
-language dropdown writes the selected code to `sittings.lang` so translations
-load after refreshing.
+نظام Flex POS هو تطبيق بسيط وخفيف لإدارة نقاط البيع والمخزون، مبني باستخدام PHP. يشمل لوحة تحكم إدارية، وإدارة العملاء والطلبات، وإمكانية طباعة الإيصالات باستخدام قوالب قابلة للتخصيص.
 
-All interface text is loaded from the translation files under `lang/`.
+> **ملاحظة**: هذا المشروع **عراقي بالكامل**، مجاني 100%، مفتوح المصدر، ومتاح للجميع للتعديل، الإضافة أو الاستخدام بأي طريقة يرونها مناسبة.
 
-## Usage
-- Log in using the administrator account created during installation. This user now includes roles for all panels by default.
-- Access the admin panel to add products, clients, users and update settings.
-- Use the sales screen to create new orders and print receipts.
+---
+## **الميزات**
 
-### Default roles
-The administrator account seeded during installation is granted the following roles:
+* إدارة المنتجات مع إمكانية البحث باستخدام الباركود.
+* تتبع العملاء والطلبات والديون المستحقة.
+* طباعة إيصالات البيع من خلال طابعة قابلة للتكوين.
+* حسابات مستخدمين بصلاحيات محددة، مع لوحة تحكم إدارية.
+* جرس تنبيهات يعرض عدد الطلبات الأخيرة. (غير مكتمل)
+* إمكانية رفع شعار مخصص من لوحة الإعدادات.
 
-- `admin_panel`
-- `salse_panel`
-- `orders_panel`
-- `clients_panel`
-- `users_panel`
-- `products_panel`
-- `unit_panel`
-- `class_panel`
-- `settings_panel`
-- `client`
-- `product`
-- `class`
-- `unit`
-- `user`
+---
+## **المتطلبات الأساسية**
 
-These role names correspond to the dashboard pages available via the `p` query parameter.
+* تم انشاء واختبار هذا التطبيق على Xampp فقط
+* PHP 7.4 أو أحدث مع امتداد MySQLi.
+* خادم قاعدة بيانات MySQL.
+* خادم ويب مثل Apache أو Nginx.
 
-### Adding roles for new pages
-If you introduce a new panel or management page, insert a row into the `role` table for each user who should see it. The `role_name` must match the page identifier in the `p` parameter and the navigation link you add in `assets/theme/admin_panel.php`. See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for more details.
+---
+## **التهيئة**
 
-## Customizing the print template
-The HTML used for printing receipts lives in `print/template/printtemplate.txt`.
-Open the Settings panel and edit it using the built‑in editor, then press
-**Save template** to persist your changes. To revert, overwrite the file with a
-fresh copy from the repository.
-Placeholders such as `@company_name`, `@company_address`, `@company_email` and `@company_phone` will be replaced with the values configured in Settings.
+توجد كل الإعدادات في ملف `config.php`. يمكنك تعديل بيانات الاتصال بقاعدة البيانات. يمكن أيضاً تعديل إعدادات الطابعة وغيرها من لوحة التحكم بعد تسجيل الدخول.
 
-## Running the application
-Host the project on your PHP-enabled server and visit `index.php` (e.g., `http://localhost/flexpostemp`). If the application isn't installed yet, you will be redirected to the installer.
-## Security
-All POST requests require a valid CSRF token. Every form includes a hidden `csrf_token` field generated from the current session. JavaScript that sends data via `$.post()` should either include this token manually or load `assets/js/csrf.js` which appends it automatically.
+---
+## **🚨 مهم! 🚨**
+_لتثبيت التطبيق:_
+### **اعداد البيئة**
 
-## Development
-For details on setting up a local development environment, see [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
-Sample SQL scripts are provided in the `scripts/` directory to quickly seed products, clients and orders for testing.
-Run `php scripts/dbcheck.php` to verify that your database credentials are valid.
+* عند تشغيل Xampp
+<img width="668" height="433" alt="image" src="https://github.com/user-attachments/assets/eeeefc2a-0a0c-4034-9c26-108c98692768" />
 
-## Database Backups
-Create a dump of your database by running:
+* ثبت Apache Service و MySQL Service من خلال النقر على <img width="23" height="25" alt="image" src="https://github.com/user-attachments/assets/8b2b35a1-1066-4e9b-9f14-3e16aed31690" />
 
-```bash
-php scripts/backup.php
-```
+* يجب ان تكون الخدمات مثبتة وعندها ستظهر <img width="24" height="25" alt="image" src="https://github.com/user-attachments/assets/bff2bbd8-c624-44e2-a21f-1a759772147f" />
 
-The script writes a timestamped SQL file under the `backups/` directory. To
-schedule daily backups via cron at 2:00 AM, add a line like the following:
+  <img width="666" height="434" alt="image" src="https://github.com/user-attachments/assets/4cb45da0-026d-4608-9eab-f519ea7e2430" />
 
-```
-0 2 * * * /usr/bin/php /path/to/scripts/backup.php >/dev/null 2>&1
-```
+* توجه الى Services من خلال النقر على <img width="88" height="29" alt="image" src="https://github.com/user-attachments/assets/c4de97a2-0263-46eb-8255-9b4fe55b7100" />
 
-Replace `/path/to` with the absolute path to this project.
+<img width="988" height="590" alt="image" src="https://github.com/user-attachments/assets/7d24a108-1f3d-48af-9d07-fabd501bac04" />
 
-## License
-This project is licensed under the [MIT License](LICENSE).
+* ابحث عن Apache Service <img width="89" height="22" alt="image" src="https://github.com/user-attachments/assets/3f4bd3c9-f664-4fb6-bbe1-f693abe62d5f" /> وانقر نقرتين عليها
+
+<img width="402" height="466" alt="image" src="https://github.com/user-attachments/assets/ea8e97b0-e022-4ca7-b2fd-6e90d92d0cb6" />
+
+* توجه الى <img width="44" height="15" alt="image" src="https://github.com/user-attachments/assets/b6565c63-c59d-4455-957f-98a1f1c8d3d1" /> وفعل خيار <img width="198" height="25" alt="image" src="https://github.com/user-attachments/assets/6b019880-90df-4e67-bcb4-30c4431b1e0e" /> ثم اختر OK
+
+<img width="405" height="466" alt="image" src="https://github.com/user-attachments/assets/67c36ce6-fa40-4676-adb4-82e1466b2115" />
+
+* قم بتشغيل Apache و MySQL من خلال النقر على <img width="62" height="25" alt="image" src="https://github.com/user-attachments/assets/e73e4a85-6f65-4a52-ae05-4fcf299f48f2" />
+
+<img width="668" height="431" alt="image" src="https://github.com/user-attachments/assets/26dd4bf7-ddca-4cf0-9443-f0cd517ca775" />
+
+
+### **طريقة التثبيت**
+1. استخرج الملفات داخل مجلد `C:\xampp\htdocs\`.
+2. انتقل الى `http://localhost/FlexPOS-main` في المتصفح واملأ النموذج ببيانات قاعدة البيانات.
+3. تهانينا لقد قمت بتثبيت التطبيق 
+---
+## **الاستخدام**
+
+* قم بتسجيل الدخول باستخدام حساب المدير اسم المستخدم ```admin``` كلمة المرور ```admin```.
+* من لوحة التحكم، أضف المنتجات والعملاء والمستخدمين وعدّل الإعدادات.
+* استخدم شاشة المبيعات لإنشاء الطلبات وطباعة الفواتير.
+
+---
+## **تخصيص قالب الطباعة**
+ملف HTML الخاص بطباعة الإيصالات موجود في `print/template/printtemplate.txt`.
+
+---
+## **الرخصة**
+
+هذا المشروع مرخّص تحت [رخصة MIT](LICENSE) — حرّ بالكامل ومتاح للجميع.
+
+---
+</p>
